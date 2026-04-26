@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../component/Sidebar/Sidebar.jsx";
+import Sidebar from '../../component/Sidebar/Sidebar.jsx';
+import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
+import Spinner from '../../component/Spinner/Spinner.jsx';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import axiosIntance from "../../utils/axiosIntance.jsx"
 
 export default function Keuangan() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setIsDataLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
   const [keuangan, setKeuangan] = useState(null)
   const [chartData, setChartData] = useState([])
   const [transaksi, setTransaksi] = useState([])
@@ -14,48 +22,11 @@ export default function Keuangan() {
     getTransaksi()
   }, [])
 
-  // useEffect(() => {
-  //   const days = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-  //   const data = [];
-  //   const today = new Date();
-  //   today.setHours(0, 0, 0, 0);
-
-  //   for (let i = 6; i >= 0; i--) {
-  //     const date = new Date(today);
-  //     date.setDate(today.getDate() - i);
-  //     data.push({
-  //       dateObj: date,
-  //       name: days[date.getDay()],
-  //       pemasukan: 0,
-  //       pengeluaran: 0,
-  //     });
-  //   }
-
-  //   if (transaksi && transaksi.length > 0) {
-  //     transaksi.forEach((item) => {
-  //       const trxDate = new Date(item.createdAt);
-  //       trxDate.setHours(0, 0, 0, 0);
-
-  //       const targetDay = data.find((d) => d.dateObj.getTime() === trxDate.getTime());
-  //       if (targetDay) {
-  //         if (item.type === 'pemasukan') {
-  //           targetDay.pemasukan += Number(item.amount);
-  //         } else if (item.type === 'pengeluaran') {
-  //           targetDay.pengeluaran += Number(item.amount);
-  //         }
-  //       }
-  //     });
-  //   }
-
-  //   setChartData(data);
-  // }, [keuangan, transaksi])
-
 const getKeuangan = async () => {
   try {
     const result = await axiosIntance.get("/dashboard")
       setKeuangan(result.data.data.ringkasanKeuangan)
-    // console.log(result.data);
-    
+
   } catch (error) {
     console.log(error?.response?.data);
   }
@@ -104,19 +75,23 @@ const grafikData = Array.from({length: 7}, (_, i) => {
   };
 })
   return (
-    <div className="bg-gray-50 min-h-screen font-sans">
-      <Sidebar />
-      <div className="ml-[240px] p-6 transition-all duration-300">
+    <>
+      <div className="bg-gray-50 min-h-screen font-sans">
+      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 relative`}>
+        <MobileHeader onOpenSidebar={() => setSidebarOpen(true)} />
+
+        {isDataLoading && <Spinner />}
         
-        {/* HEADER */}
+        {}
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Keuangan</h2>
           <p className="text-sm text-gray-500 mt-1">Pencatatan dan ringkasan arus kas Anda</p>
         </div>
 
-        {/* SUMMARY CARDS */}
+        {}
         
-        <div className="grid md:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
           <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
             <div className="flex items-center gap-2 mb-2 text-gray-500">
               <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
@@ -148,11 +123,11 @@ const grafikData = Array.from({length: 7}, (_, i) => {
           </div>
         </div>
 
-        {/* BOTTOM SECTION */}
-        <div className="grid md:grid-cols-3 gap-6">
+        {}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* CHART */}
-          <div className="md:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          {}
+          <div className="lg:col-span-6 lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="mb-6 flex justify-between items-center">
                <h3 className="font-bold text-gray-900">Grafik Arus Kas Mingguan</h3>
                <button className="text-xs text-blue-600 font-medium hover:text-blue-800 transition-colors cursor-pointer border border-blue-100 px-3 py-1.5 rounded-lg bg-blue-50/50">Filter</button>
@@ -202,7 +177,7 @@ const grafikData = Array.from({length: 7}, (_, i) => {
             </div>
           </div>
           
-          {/* TRANSACTIONS */}
+          {}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col overflow-hidden max-h-[430px]">
             <div className="flex justify-between items-center p-5 border-b border-gray-100 bg-white z-10 shrink-0">
               <h3 className="font-bold text-gray-900">Transaksi Terakhir</h3>
@@ -242,5 +217,6 @@ const grafikData = Array.from({length: 7}, (_, i) => {
         </div>
       </div>
     </div>
+    </>
   );
 }

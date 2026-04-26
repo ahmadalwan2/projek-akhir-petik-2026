@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../../component/Sidebar/Sidebar.jsx";
+import Sidebar from '../../component/Sidebar/Sidebar.jsx';
+import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
+import Spinner from '../../component/Spinner/Spinner.jsx';
 
 export default function Pengaturan() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setIsDataLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
   const [activeTab, setActiveTab] = useState("profil");
-  
-  // Profile State
+
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem("nexora_profile");
     if (saved) return JSON.parse(saved);
@@ -20,7 +27,6 @@ export default function Pengaturan() {
 
   const [isSaving, setIsSaving] = useState(false);
 
-  // Sync to localStorage
   useEffect(() => {
     localStorage.setItem("nexora_profile", JSON.stringify(profile));
   }, [profile]);
@@ -59,45 +65,49 @@ export default function Pengaturan() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen font-sans">
-      <Sidebar />
-      <div className="ml-[240px] p-6 transition-all duration-300">
+    <>
+      <div className="bg-gray-50 min-h-screen font-sans">
+      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 relative`}>
+        <MobileHeader onOpenSidebar={() => setSidebarOpen(true)} />
+
+        {isDataLoading && <Spinner />}
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Pengaturan</h2>
           <p className="text-sm text-gray-500 mt-1">Atur preferensi akun dan sistem Anda</p>
         </div>
 
-        <div className="flex gap-6">
-          {/* Tabs - SaaS Style Side Nav */}
-          <div className="w-1/4">
-            <div className="flex flex-col gap-1">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {}
+          <div className="w-full lg:w-1/4">
+            <div className="flex flex-row lg:flex-col gap-1 overflow-x-auto pb-2 lg:pb-0">
               <button 
                 onClick={() => setActiveTab("profil")} 
-                className={`text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium border-l-4 ${activeTab === "profil" ? "bg-blue-50/50 text-blue-700 border-blue-600" : "border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900"}`}
+                className={`whitespace-nowrap lg:text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium border-b-4 lg:border-b-0 lg:border-l-4 ${activeTab === "profil" ? "bg-blue-50/50 text-blue-700 border-blue-600" : "border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900"}`}
               >
                 Profil Saya
               </button>
               <button 
                 onClick={() => setActiveTab("keamanan")} 
-                className={`text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium border-l-4 ${activeTab === "keamanan" ? "bg-blue-50/50 text-blue-700 border-blue-600" : "border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900"}`}
+                className={`whitespace-nowrap lg:text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium border-b-4 lg:border-b-0 lg:border-l-4 ${activeTab === "keamanan" ? "bg-blue-50/50 text-blue-700 border-blue-600" : "border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900"}`}
               >
                 Keamanan & Sandi
               </button>
               <button 
                 onClick={() => setActiveTab("notifikasi")} 
-                className={`text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium border-l-4 ${activeTab === "notifikasi" ? "bg-blue-50/50 text-blue-700 border-blue-600" : "border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900"}`}
+                className={`whitespace-nowrap lg:text-left px-4 py-2.5 rounded-lg text-sm transition-all font-medium border-b-4 lg:border-b-0 lg:border-l-4 ${activeTab === "notifikasi" ? "bg-blue-50/50 text-blue-700 border-blue-600" : "border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900"}`}
               >
                 Notifikasi
               </button>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="w-3/4">
+          {}
+          <div className="w-full lg:w-3/4">
             {activeTab === "profil" && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-[fadeIn_0.2s_ease-out]">
                 
-                {/* COVER & AVATAR SECTION */}
+                {}
                 <div 
                   className={`h-32 w-full relative ${profile.cover ? '' : 'bg-gradient-to-r from-blue-400 to-indigo-500'}`}
                   style={profile.cover ? { backgroundImage: `url(${profile.cover})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
@@ -273,5 +283,6 @@ export default function Pengaturan() {
         }
       `}} />
     </div>
+    </>
   );
 }

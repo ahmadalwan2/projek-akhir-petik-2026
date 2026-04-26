@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../component/Sidebar/Sidebar.jsx";
+import Sidebar from '../../component/Sidebar/Sidebar.jsx';
+import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
+import Spinner from '../../component/Spinner/Spinner.jsx';
 import { FaTrash } from "react-icons/fa";
 import axiosIntance from "../../utils/axiosIntance.jsx";
 
 export default function Aktifitas() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setIsDataLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
   const navigate = useNavigate();
   const [activities, setActivities] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -23,7 +31,6 @@ const [idToDelete, setIdToDelete] = useState(null);
   },[])
 
   const getActivities = async () => {
-   
 
     try {
       const result = await axiosIntance.get("/activities")
@@ -49,14 +56,12 @@ const toggleStatus = async (id) => {
   }
 }
 
-
 const deleteActivity = async (id) => {
   console.log('Delete activity untuk id:', id);
   
   try {
     const result = await axiosIntance.delete(`/activities/delete/${id}`)
 
-    
     getActivities()
   } catch (error) {
     console.log(error?.response?.data);
@@ -78,7 +83,6 @@ const getStatusDetail = (statusId) => {
 
 const handleEditClick = (act, e) => {
   e.stopPropagation(); 
-  
 
   setSelectedId(act.id);
   setTitle(act.title);
@@ -148,15 +152,17 @@ const handleDeleteExecute = async () => {
   }
 };
 
-
-
   return (
-    <div className="bg-gray-50 min-h-screen font-sans">
-      <Sidebar />
-      <div className="ml-[240px] p-6 transition-all duration-300">
+    <>
+      <div className="bg-gray-50 min-h-screen font-sans">
+      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 relative`}>
+        <MobileHeader onOpenSidebar={() => setSidebarOpen(true)} />
+
+        {isDataLoading && <Spinner />}
         
-        {/* HEADER */}
-        <div className="flex justify-between items-center mb-6">
+        {}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Daftar Aktifitas</h2>
             <p className="text-sm text-gray-500 mt-1">Kelola tugas dan jadwalkan aktifitasmu dengan rapi.</p>
@@ -170,15 +176,15 @@ const handleDeleteExecute = async () => {
           </button>
         </div>
 
-        {/* LIST CONTAINER SaaS Style */}
+        {}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           
           <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-100 bg-gray-50/50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            <div className="col-span-3">Nama Aktifitas</div>
-            <div className="col-span-3">Deskripsi</div>
-            <div className="col-span-2">Jadwal</div>
-            <div className="col-span-2">Kategori</div>
-            <div className="col-span-2 text-right">Status / Aksi</div>
+            <div className="col-span-6 lg:col-span-3">Nama Aktifitas</div>
+            <div className="col-span-6 lg:col-span-3">Deskripsi</div>
+            <div className="col-span-6 lg:col-span-2">Jadwal</div>
+            <div className="col-span-6 lg:col-span-2">Kategori</div>
+            <div className="col-span-6 lg:col-span-2 text-right">Status / Aksi</div>
           </div>
 
           <div className="divide-y divide-gray-100">
@@ -194,31 +200,30 @@ const handleDeleteExecute = async () => {
                 onClick={() => toggleStatus(act.id)}
                 className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-gray-50/80 transition-colors cursor-pointer group"
               >
-                 <div className="col-span-3 flex items-center gap-3">
+                 <div className="col-span-6 lg:col-span-3 flex items-center gap-3">
                    <div className={`w-2 h-2 rounded-full transition-colors ${act.status === 3 ? 'bg-green-500' : 'bg-orange-500'}`}></div>
                    <h3 className={`font-medium text-[15px] transition-colors ${act.status === 3 ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{act.title}</h3>
                  </div>
                  
-                 {/* KOLOM DESKRIPSI */}
-                  <div className="col-span-3">
+                 {}
+                  <div className="col-span-6 lg:col-span-3">
                     <p className={`text-sm truncate ${act.status === 3 ? 'text-gray-400' : 'text-gray-500'}`} title={act.description}>
                       {act.description || "-"}
                     </p>
                   </div>
 
-                 {/* KOLOM JADWAL */}
-                  <div className="col-span-2">
+                 {}
+                  <div className="col-span-6 lg:col-span-2">
                     <div className={`flex items-center gap-2 text-sm ${act.status === 3 ? 'text-gray-400' : 'text-gray-600'}`}>
                         <span>{act.createdAt?.split('T')[0]}</span>
                     </div>
                   </div>
-                            
 
-                 <div className={`col-span-2 text-sm ${act.status === 3 ? 'text-gray-400' : 'text-gray-600'}`}>
+                 <div className={`col-span-6 lg:col-span-2 text-sm ${act.status === 3 ? 'text-gray-400' : 'text-gray-600'}`}>
                    {act.categories}
                  </div>
 
-                <div className="col-span-2 flex justify-end items-center gap-3">
+                <div className="col-span-6 lg:col-span-2 flex justify-end items-center gap-3">
                     <span 
                       onClick={(e) => handleStatusClick(act, e)}
                       className={`text-[11px] font-bold px-2.5 py-1 rounded-full border cursor-pointer hover:opacity-80 transition-opacity ${statusInfo.color}`}
@@ -248,12 +253,12 @@ const handleDeleteExecute = async () => {
         </div>
 
       </div>
-      {/* MODAL KONFIRMASI HAPUS */}
+      {}
         {deleteModalOpen && (
           <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all">
               <div className="p-6 text-center">
-                {/* Icon Peringatan */}
+                {}
                 <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
                   <svg className="h-10 w-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -284,7 +289,7 @@ const handleDeleteExecute = async () => {
           </div>
         )}
 
-      {/* MODAL EDIT */}
+      {}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl border w-full max-w-md p-6">
@@ -340,7 +345,7 @@ const handleDeleteExecute = async () => {
         </div>
       )}
 
-      {/* MODAL EDIT STATUS ONLY */}
+      {}
       {statusModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl border w-full max-w-sm p-6">
@@ -395,5 +400,6 @@ const handleDeleteExecute = async () => {
       )}
     </div>
     
+    </>
   );
 }

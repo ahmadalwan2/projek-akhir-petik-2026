@@ -13,7 +13,6 @@ axiosIntance.interceptors.request.use((config) => {
     return config;
 });
 
-// kalo kode status nya 401 maka redirect ke login
 axiosIntance.interceptors.response.use(
     (response) => response,
     (error) => {

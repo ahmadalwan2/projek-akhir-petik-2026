@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../../component/Sidebar/Sidebar.jsx";
+import Sidebar from '../../component/Sidebar/Sidebar.jsx';
+import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
+import Spinner from '../../component/Spinner/Spinner.jsx';
 import axiosIntance from "../../utils/axiosIntance.jsx";
 
 export default function Notifikasi() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setIsDataLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
   const [notifications, setNotifications] = useState([]);
   const [readIds, setReadIds] = useState(() => {
     const saved = localStorage.getItem("nexora_read_notifications");
@@ -17,7 +25,7 @@ export default function Notifikasi() {
     localStorage.setItem("nexora_read_notifications", JSON.stringify(readIds));
   }, [readIds]);
 
-  const fetchData = async () => {
+    const fetchData = async () => {
     try {
       const [actRes, finRes] = await Promise.all([
         axiosIntance.get("/activities").catch(() => ({ data: [] })),
@@ -34,7 +42,8 @@ export default function Notifikasi() {
   };
 
   useEffect(() => {
-    fetchData();
+    setIsDataLoading(true);
+    fetchData().finally(() => setIsDataLoading(false));
   }, []);
 
   const timeAgo = (date) => {
@@ -110,11 +119,15 @@ export default function Notifikasi() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen font-sans">
-      <Sidebar />
-      <div className="ml-[240px] p-6 transition-all duration-300">
+    <>
+      <div className="bg-gray-50 min-h-screen font-sans">
+      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 relative`}>
+        <MobileHeader onOpenSidebar={() => setSidebarOpen(true)} />
+
+        {isDataLoading && <Spinner />}
         
-        {/* HEADER */}
+        {}
         <div className="flex justify-between items-center mb-6">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Notifikasi</h2>
@@ -128,7 +141,7 @@ export default function Notifikasi() {
           </button>
         </div>
 
-        {/* NOTIFICATION LIST */}
+        {}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden max-w-4xl">
           <div className="divide-y divide-gray-100">
             {notifications.length === 0 ? (
@@ -143,7 +156,7 @@ export default function Notifikasi() {
                 className={`p-5 flex gap-4 transition-colors cursor-pointer ${isRead ? 'bg-white hover:bg-gray-50' : 'bg-blue-50/50 hover:bg-blue-50'}`}
               >
                 
-                {/* ICON */}
+                {}
                 <div className="flex-shrink-0 mt-1">
                   {notif.type === 'success' && (
                     <div className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
@@ -167,7 +180,7 @@ export default function Notifikasi() {
                   )}
                 </div>
 
-                {/* CONTENT */}
+                {}
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
                     <h4 className={`text-base ${isRead ? 'font-medium text-gray-800' : 'font-bold text-gray-900'}`}>
@@ -180,7 +193,7 @@ export default function Notifikasi() {
                   </p>
                 </div>
 
-                {/* UNREAD DOT */}
+                {}
                 {!isRead && (
                   <div className="flex-shrink-0 flex items-center">
                     <div className="w-2.5 h-2.5 rounded-full bg-blue-600"></div>
@@ -194,6 +207,7 @@ export default function Notifikasi() {
 
       </div>
     </div>
+    </>
   );
 }
 

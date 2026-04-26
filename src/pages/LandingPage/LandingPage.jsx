@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaClock,
@@ -14,9 +14,13 @@ import {
 export default function LandingPage() {
   const navigate = useNavigate();
 
-  /* ======================= */
-  /* 🔥 STATE FAQ */
-  /* ======================= */
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
+
   const [openIndex, setOpenIndex] = useState(null);
 
   const faqs = [
@@ -45,7 +49,7 @@ export default function LandingPage() {
   return (
     <div className="bg-gray-50 text-gray-800 font-sans">
 
-      {/* ================= NAVBAR ================= */}
+      {}
       <nav className="sticky top-0 z-50 bg-white w-full">
         <div className="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
           
@@ -70,7 +74,7 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* ================= HERO ================= */}
+      {}
       <section className="max-w-6xl mx-auto px-6 pt-10 pb-20 text-center" id="hero">
 
         <h1 className="text-4xl md:text-5xl font-bold leading-tight">
@@ -91,7 +95,7 @@ export default function LandingPage() {
           </button>
         </div>
 
-        {/* GRID */}
+        {}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
 
           <div className="flex items-center justify-center h-[320px] md:h-[360px]">
@@ -121,7 +125,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ================= FITUR ================= */}
+      {}
       <section className="max-w-6xl mx-auto px-6 py-20" id="fitur">
 
         <div className="mb-12">
@@ -157,7 +161,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ================= TENTANG ================= */}
+      {}
       <section className="max-w-6xl mx-auto px-6 pb-20" id="tentang">
 
         <div className="mb-8">
@@ -182,7 +186,7 @@ export default function LandingPage() {
 
       </section>
 
-      {/* ================= BANTUAN / FAQ ================= */}
+      {}
       <section className="max-w-6xl mx-auto px-6 pb-20" id="bantuan">
 
         <div className="mb-10">
@@ -225,19 +229,19 @@ export default function LandingPage() {
         </div>
       </section>
 
-            {/* ======================= */}
-      {/* 🔻 FOOTER */}
-      {/* ======================= */}
+            {}
+      {}
+      {}
       <footer className="relative bg-gradient-to-r from-[#031B3A] to-[#0B3B8C] text-white overflow-hidden">
 
-        {/* 🔵 BLUR EFFECT */}
+        {}
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[200px] bg-blue-500 opacity-30 blur-[120px]"></div>
 
         <div className="max-w-6xl mx-auto px-6 py-14 relative z-10">
 
           <div className="grid md:grid-cols-4 gap-10">
 
-            {/* LOGO + CTA */}
+            {}
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <img src="/nexora-tab-logo.svg" alt="logo" className="h-4" />
@@ -253,7 +257,7 @@ export default function LandingPage() {
               </button>
             </div>
 
-            {/* TAUTAN */}
+            {}
             <div>
               <h4 className="font-semibold mb-4">Tautan berguna</h4>
               <ul className="space-y-2 text-sm text-gray-300">
@@ -264,7 +268,7 @@ export default function LandingPage() {
               </ul>
             </div>
 
-            {/* DUKUNGAN */}
+            {}
             <div>
               <h4 className="font-semibold mb-4">Dukungan</h4>
               <ul className="space-y-2 text-sm text-gray-300">
@@ -275,7 +279,7 @@ export default function LandingPage() {
               </ul>
             </div>
 
-            {/* ALAMAT */}
+            {}
             <div>
               <h4 className="font-semibold mb-4">PeTIK Depok</h4>
               <p className="text-sm text-gray-300 leading-relaxed">
@@ -287,14 +291,14 @@ export default function LandingPage() {
 
           </div>
 
-          {/* BOTTOM */}
+          {}
           <div className="mt-10 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
 
             <p className="text-sm text-gray-400">
               © 2026 Nexora. Semua hak cipta dilindungi.
             </p>
 
-            {/* SOCIAL */}
+            {}
             <div className="flex gap-3">
               <a href="">
                 <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 cursor-pointer">

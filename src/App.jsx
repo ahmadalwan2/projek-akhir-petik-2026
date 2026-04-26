@@ -8,35 +8,43 @@ import TambahAktifitas from "./pages/Aktifitas/TambahAktifitas.jsx";
 import Keuangan from "./pages/Keuangan/Keuangan.jsx";
 import Pengaturan from "./pages/Pengaturan/Pengaturan.jsx";
 import Notifikasi from "./pages/Notifikasi/Notifikasi.jsx";
+import Syarat_danKetentuan from "./pages/Syarat_danKetentuan/Syarat_danKetentuan.jsx";
+import LupaPassword from "./pages/LupaPassword/LupaPassword.jsx";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
 
-        {/* HALAMAN UTAMA */}
+        {}
         <Route path="/" element={<LandingPage />} />
 
-        {/* HALAMAN LOGIN */}
+        {}
         <Route path="/login" element={<Login />} />
 
-        {/* HALAMAN REGISTER */}
-        <Route path="/register" element={<Register />} />
+        {}
+        <Route path="/lupa-password" element={<LupaPassword />} />
 
-        {/* HALAMAN DASHBOARD */}
+        {}
+        <Route path="/register" element={<Register />} />
+        
+        {}
+        <Route path="/syarat-ketentuan" element={<Syarat_danKetentuan />} />
+
+        {}
         <Route path="/dashboard" element={<Dashboard />} />
 
-        {/* HALAMAN AKTIFITAS */}
+        {}
         <Route path="/aktifitas" element={<Aktifitas />} />
         <Route path="/aktifitas/tambah" element={<TambahAktifitas />} />
 
-        {/* HALAMAN NOTIFIKASI */}
+        {}
         <Route path="/notifikasi" element={<Notifikasi />} />
 
-        {/* HALAMAN KEUANGAN */}
+        {}
         <Route path="/keuangan" element={<Keuangan />} />
 
-        {/* HALAMAN PENGATURAN */}
+        {}
         <Route path="/pengaturan" element={<Pengaturan />} />
 
       </Routes>

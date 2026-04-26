@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../component/Sidebar/Sidebar.jsx";
+import Sidebar from '../../component/Sidebar/Sidebar.jsx';
+import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
+import Spinner from '../../component/Spinner/Spinner.jsx';
 import axiosIntance from "../../utils/axiosIntance.jsx";
 
 export default function TambahAktifitas() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setIsDataLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
   const navigate = useNavigate();
   const [title, setTitle]= useState("");
   const [description, setDescription] = useState("");
@@ -26,17 +34,19 @@ const handleSubmit = async (e) => {
   } catch (error) {
     console.log(error?.response?.data);
 
-   
   } finally {
     setLoading(false)
   }
 }
 
-  
   return (
-    <div className="bg-gray-50 min-h-screen font-sans">
-      <Sidebar />
-      <div className="ml-[240px] p-6 transition-all duration-300">
+    <>
+      <div className="bg-gray-50 min-h-screen font-sans">
+      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 relative`}>
+        <MobileHeader onOpenSidebar={() => setSidebarOpen(true)} />
+
+        {isDataLoading && <Spinner />}
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Tambah Aktifitas Baru</h2>
           <p className="text-sm text-gray-500 mt-1">Isi detail di bawah ini untuk membuat jadwal aktifitas.</p>
@@ -45,7 +55,7 @@ const handleSubmit = async (e) => {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-2xl">
           <div className="flex flex-col gap-5">
             <form onSubmit={handleSubmit}>
-              {/* Input Nama Aktifitas */}
+              {}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="title">Nama Aktifitas</label>
                 <input 
@@ -57,7 +67,7 @@ const handleSubmit = async (e) => {
                   placeholder="Mis: Meeting Project Nexora" 
                 />
               </div>
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="kategori">Kategori</label>
                   <div className="relative">
@@ -110,11 +120,11 @@ const handleSubmit = async (e) => {
                 </button>
               </div>
             </form>
-            
 
           </div>
         </div>
       </div>
     </div>
+    </>
   );
 }
