@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
+
 import axiosIntance from "../../utils/axiosIntance";
 
 export default function Login() {
@@ -34,9 +34,15 @@ export default function Login() {
       )
       const token = result.data.token;
      localStorage.setItem('token', token)
+    
      const decode = jwtDecode(token)
-     console.log("Data Decode", decode);
-     
+    //  console.log("Data Decode", decode);
+      
+      localStorage.setItem("nexora_user", JSON.stringify({
+        name: decode.username || decode.name || "User",
+        email: decode.email || email
+      }));
+      
       navigate('/dashboard')
       
     } catch (error) {
