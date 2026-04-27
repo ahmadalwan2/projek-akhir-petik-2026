@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from '../../component/Sidebar/Sidebar.jsx';
 import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
@@ -32,7 +32,7 @@ const handleSubmit = async (e) => {
     
     navigate(-1)
   } catch (error) {
-    console.log(error?.response?.data);
+
 
   } finally {
     setLoading(false)

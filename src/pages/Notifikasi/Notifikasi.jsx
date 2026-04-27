@@ -7,10 +7,7 @@ import axiosIntance from "../../utils/axiosIntance.jsx";
 export default function Notifikasi() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isDataLoading, setIsDataLoading] = useState(true);
-  useEffect(() => {
-    const timer = setTimeout(() => setIsDataLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
+  
   const [notifications, setNotifications] = useState([]);
   const [readIds, setReadIds] = useState(() => {
     const saved = localStorage.getItem("nexora_read_notifications");
@@ -26,6 +23,8 @@ export default function Notifikasi() {
   }, [readIds]);
 
     const fetchData = async () => {
+    setIsDataLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 800));
     try {
       const [actRes, finRes] = await Promise.all([
         axiosIntance.get("/activities").catch(() => ({ data: [] })),
@@ -37,7 +36,7 @@ export default function Notifikasi() {
 
       generateNotifications(activities, finances);
     } catch (error) {
-      console.log("Error fetching notifications:", error);
+
     }
   };
 
@@ -102,14 +101,23 @@ export default function Notifikasi() {
       });
     }
 
-    notifs.sort((a, b) => b.createdAt - a.createdAt);
-    setNotifications(notifs);
+    const clearedAt = parseInt(localStorage.getItem("nexora_notifications_clear_at") || "0");
+    const filteredNotifs = notifs.filter(n => n.createdAt > clearedAt);
+
+    filteredNotifs.sort((a, b) => b.createdAt - a.createdAt);
+    setNotifications(filteredNotifs);
   };
 
   const markAllRead = () => {
     const allIds = notifications.map(n => n.id);
     const newReadIds = Array.from(new Set([...readIds, ...allIds]));
     setReadIds(newReadIds);
+  };
+
+  const clearAllNotifications = () => {
+    const now = new Date().getTime();
+    localStorage.setItem("nexora_notifications_clear_at", now);
+    setNotifications([]);
   };
 
   const markAsRead = (id) => {
@@ -122,23 +130,44 @@ export default function Notifikasi() {
     <>
       <div className="bg-gray-50 min-h-screen font-sans">
       <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
-      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 relative`}>
+      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 min-h-screen relative`}>
         <MobileHeader onOpenSidebar={() => setSidebarOpen(true)} />
 
-        {isDataLoading && <Spinner />}
+        {isDataLoading && <Spinner sidebarOpen={sidebarOpen} />}
         
         {}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Notifikasi</h2>
-            <p className="text-sm text-gray-500 mt-1">Pantau pembaruan dan pengingat aktifitasmu di sini.</p>
+            <h2 className="text-2xl font-bold text-gray-900">Kabar Terbaru</h2>
+            <p className="text-sm text-gray-500 mt-1 font-medium">Pantau setiap pembaruan dan pengingat aktifitasmu di sini.</p>
           </div>
-          <button 
-            onClick={markAllRead}
-            className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
-          >
-            Tandai semua dibaca
-          </button>
+          <div className="flex items-center gap-3">
+             <button 
+                onClick={markAllRead}
+                disabled={notifications.length === 0}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all border shadow-sm ${
+                  notifications.length === 0 
+                  ? "bg-gray-50 text-gray-400 border-gray-100 cursor-not-allowed" 
+                  : "bg-white text-gray-700 border-gray-200 hover:border-blue-500 hover:text-blue-600 cursor-pointer"
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                Tandai Dibaca
+              </button>
+              
+              <button 
+                onClick={clearAllNotifications}
+                disabled={notifications.length === 0}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shadow-sm ${
+                  notifications.length === 0 
+                  ? "bg-gray-50 text-gray-400 cursor-not-allowed" 
+                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200 cursor-pointer"
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                Bersihkan Semua
+              </button>
+          </div>
         </div>
 
         {}

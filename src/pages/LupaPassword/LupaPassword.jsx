@@ -31,7 +31,7 @@ export default function LupaPassword() {
       }, 3000);
       
     } catch (error) {
-      console.log(error?.response);
+
 
       const responseMessage = error?.response?.data?.message || "";
       if (responseMessage.toLowerCase().includes("tidak ditemukan") || responseMessage.toLowerCase().includes("tidak terdaftar") || error?.response?.status === 404) {

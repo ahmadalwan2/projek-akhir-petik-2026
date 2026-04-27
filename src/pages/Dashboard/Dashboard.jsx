@@ -15,10 +15,7 @@ import axiosInstance from "../../utils/axiosIntance.jsx";
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isDataLoading, setIsDataLoading] = useState(true);
-  useEffect(() => {
-    const timer = setTimeout(() => setIsDataLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
+  
   const getCache = (key, defaultVal) => {
     try {
       const val = localStorage.getItem(key);
@@ -27,8 +24,15 @@ export default function Dashboard() {
       return defaultVal;
     }
   };
-  const [profileName, setProfileName] = useState(() => localStorage.getItem("userName") || "Memuat...");
-  const [profileAvatar, setProfileAvatar] = useState(() => `https://ui-avatars.com/api/?name=${localStorage.getItem("userName") || "M"}`);
+  const [profileName, setProfileName] = useState(() => {
+    const meta = getCache("nexora_meta", null);
+    const user = getCache("nexora_user", null);
+    return meta?.name || user?.name || localStorage.getItem("userName") || "User";
+  });
+  const [profileAvatar, setProfileAvatar] = useState(() => {
+    const meta = getCache("nexora_meta", null);
+    return meta?.avatar || `https://ui-avatars.com/api/?name=${profileName || 'U'}&background=random`;
+  });
   const [completedTasks, setCompletedTasks] = useState(() => getCache("dash_completed", 0));
   const [mode, setMode] = useState("harian");
   const [chartData, setChartData] = useState(() => getCache("dash_chart", []));
@@ -38,20 +42,21 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    setIsDataLoading(true);
     const fetchDashboardData = async () => {
+      setIsDataLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 800));
       try {
         const response = await axiosInstance.get("/dashboard");
         const resData = response.data.data || response.data;
         const data = resData || {};
         
         if (data) {
-
           const userData = data.user || {};
           const userName = userData.nama || userData.name || "User";
-          localStorage.setItem("userName", userName);
           setProfileName(userName);
-          setProfileAvatar(`https://ui-avatars.com/api/?name=${userName}`);
+          
+          const meta = getCache("nexora_meta", {});
+          setProfileAvatar(meta.avatar || `https://ui-avatars.com/api/?name=${userName}&background=random`);
 
           const ringkasanAktifitas = data.ringkasanAktivitas || {};
           const totalTugas = ringkasanAktifitas.total_tugas || 0;
@@ -59,48 +64,44 @@ export default function Dashboard() {
           
           const actString = `${completed}/${totalTugas}`;
           setCompletedTasks(completed);
-          localStorage.setItem("dash_completed", JSON.stringify(completed));
-          
           setTotalActivities(actString);
-          localStorage.setItem("dash_totalAct", actString);
-
-          const prodPercentage = totalTugas > 0 ? Math.round((completed / totalTugas) * 100) : 0;
-          const prodString = `${prodPercentage}%`;
-          setProductivity(prodString);
-          localStorage.setItem("dash_prod", prodString);
+          setProductivity(totalTugas > 0 ? `${Math.round((completed / totalTugas) * 100)}%` : "0%");
           
           const activities = ringkasanAktifitas.daftar_activities || [];
           setActivitiesData(activities);
-          localStorage.setItem("dash_activities", JSON.stringify(activities));
 
-          if (data.ringkasanProgres) {
-              setChartData(data.ringkasanProgres);
-              localStorage.setItem("dash_chart", JSON.stringify(data.ringkasanProgres));
-          } else if (data.chartData) {
-              setChartData(data.chartData);
-              localStorage.setItem("dash_chart", JSON.stringify(data.chartData));
+          // Filtering Chart Logic
+          if (mode === "harian") {
+            const mockDaily = [
+              { name: "00:00", value: 0 },
+              { name: "06:00", value: 20 },
+              { name: "12:00", value: 50 },
+              { name: "18:00", value: 80 },
+              { name: "23:59", value: 100 },
+            ];
+            setChartData(mockDaily);
           } else {
-
-             const mockData = [
-               { name: "Sen", value: 10 },
-               { name: "Sel", value: 30 },
-               { name: "Rab", value: 20 },
-               { name: "Kam", value: 60 },
-               { name: "Jum", value: 40 },
-               { name: "Sab", value: 80 },
-               { name: "Min", value: 70 },
-             ];
-             setChartData(mockData);
-             localStorage.setItem("dash_chart", JSON.stringify(mockData));
+            const weeklyData = data.ringkasanProgres || data.chartData || [
+              { name: "Sen", value: 40 },
+              { name: "Sel", value: 30 },
+              { name: "Rab", value: 60 },
+              { name: "Kam", value: 80 },
+              { name: "Jum", value: 50 },
+              { name: "Sab", value: 90 },
+              { name: "Min", value: 70 },
+            ];
+            setChartData(weeklyData);
           }
         }
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
+      } finally {
+        setIsDataLoading(false);
       }
     };
 
     fetchDashboardData();
-  }, []);
+  }, [mode]);
 
   const todayDate = new Date().toLocaleDateString('id-ID', {
     weekday: 'long',
@@ -122,10 +123,10 @@ export default function Dashboard() {
       <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
 
       {}
-      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 relative`}>
+      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 min-h-screen relative`}>
         <MobileHeader onOpenSidebar={() => setSidebarOpen(true)} />
 
-        {isDataLoading && <Spinner />}
+        {isDataLoading && <Spinner sidebarOpen={sidebarOpen} />}
 
         {}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">

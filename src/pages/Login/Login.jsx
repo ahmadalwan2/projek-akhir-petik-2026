@@ -15,16 +15,35 @@ export default function Login() {
   const navigate = useNavigate();
 
   const getFieldError = (field) => {
-    if (field === 'email') return errors.find(e => e.message.toLowerCase().includes('email') || e.message.toLowerCase().includes('pengguna'))?.message;
-    if (field === 'password') return errors.find(e => e.message.toLowerCase().includes('password') || e.message.toLowerCase().includes('sandi'))?.message;
+    if (field === 'email') {
+      const error = errors.find(e => e.field === 'email' || e.message.toLowerCase().includes('email') || e.message.toLowerCase().includes('pengguna'));
+      return error ? error.message : null;
+    }
+    if (field === 'password') {
+      const error = errors.find(e => e.field === 'password' || e.message.toLowerCase().includes('password') || e.message.toLowerCase().includes('sandi'));
+      return error ? error.message : null;
+    }
     return null;
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
-    setErrors([])
-    setGeneralError("")
+    setLoading(true);
+    setErrors([]);
+    setGeneralError("");
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.includes('@')) {
+      setErrors([{ field: 'email', message: "Format email harus menyertakan '@'. Contoh: user@gmail.com" }]);
+      setLoading(false);
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      setErrors([{ field: 'email', message: "Alamat email Anda tidak valid." }]);
+      setLoading(false);
+      return;
+    }
+
     try {
       const result = await axiosIntance.post(`/auth/login`,
         {
@@ -36,7 +55,7 @@ export default function Login() {
      localStorage.setItem('token', token)
     
      const decode = jwtDecode(token)
-    //  console.log("Data Decode", decode);
+
       
       localStorage.setItem("nexora_user", JSON.stringify({
         name: decode.username || decode.name || "User",
@@ -46,11 +65,13 @@ export default function Login() {
       navigate('/dashboard')
       
     } catch (error) {
-      console.log(error?.response);
-      if (error?.response?.data?.errors) {
+      const message = error?.response?.data?.message || "";
+      if (message.toLowerCase().includes("tidak ditemukan") || message.toLowerCase().includes("tidak terdaftar") || error?.response?.status === 404) {
+        setGeneralError("Akun belum terdaftar di Nexora. Silahkan register terlebih dahulu.");
+      } else if (error?.response?.data?.errors) {
         setErrors(error.response.data.errors)
       } else {
-        setGeneralError(error?.response?.data?.message || "Terjadi kesalahan saat login")
+        setGeneralError(message || "Terjadi kesalahan saat login")
       }
     } finally {
         setLoading(false)
@@ -84,13 +105,19 @@ useEffect(()=>{
 
           {}
           {generalError && (
-             <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm mb-4">
-                {generalError}
+             <div className="bg-red-50 border border-red-100 text-red-600 p-4 rounded-xl text-sm mb-6 flex items-start gap-3 animate-[shake_0.5s_ease-in-out]">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mt-0.5 shrink-0">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
+                <div className="text-left">
+                  <p className="font-semibold">Oops! Ada masalah</p>
+                  <p className="text-xs opacity-80 mt-0.5">{generalError}</p>
+                </div>
              </div>
           )}
 
           {}
-          <form className="text-left space-y-4"  onSubmit={handleSubmit}>
+          <form className="text-left space-y-4" onSubmit={handleSubmit} noValidate>
 
             {}
             <div>
@@ -101,7 +128,12 @@ useEffect(()=>{
                 placeholder="Email"
                 className={`w-full mt-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 ${getFieldError('email') ? 'border-red-500' : 'border-gray-300'}`}
               />
-              {getFieldError('email') && <p className="text-xs text-red-500 mt-1">{getFieldError('email')}</p>}
+               {getFieldError('email') && (
+                 <p className="text-[11px] text-red-500 mt-1.5 flex items-center gap-1 font-medium italic">
+                   <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                   {getFieldError('email')}
+                 </p>
+               )}
             </div>
 
             {}
@@ -131,7 +163,12 @@ useEffect(()=>{
                   )}
                 </button>
               </div>
-              {getFieldError('password') && <p className="text-xs text-red-500 mt-1">{getFieldError('password')}</p>}
+              {getFieldError('password') && (
+                <p className="text-[11px] text-red-500 mt-1.5 flex items-center gap-1 font-medium italic">
+                   <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                   {getFieldError('password')}
+                 </p>
+              )}
             </div>
 
             {}

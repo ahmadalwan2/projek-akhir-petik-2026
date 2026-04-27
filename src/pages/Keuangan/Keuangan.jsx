@@ -8,27 +8,29 @@ import axiosIntance from "../../utils/axiosIntance.jsx"
 export default function Keuangan() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isDataLoading, setIsDataLoading] = useState(true);
-  useEffect(() => {
-    const timer = setTimeout(() => setIsDataLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
+  
   const [keuangan, setKeuangan] = useState(null)
   const [chartData, setChartData] = useState([])
   const [transaksi, setTransaksi] = useState([])
   const [showAllTransaksi, setShowAllTransaksi] = useState(false)
+  const [filterMode, setFilterMode] = useState("Mingguan") // Mingguan | Harian
+  const [showFilter, setShowFilter] = useState(false)
 
   useEffect(() => {
-    getKeuangan()
+    getKeuangan().finally(() => setIsDataLoading(false))
     getTransaksi()
   }, [])
 
 const getKeuangan = async () => {
+    setIsDataLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    setIsDataLoading(true);
   try {
     const result = await axiosIntance.get("/dashboard")
       setKeuangan(result.data.data.ringkasanKeuangan)
 
   } catch (error) {
-    console.log(error?.response?.data);
+
   }
 }
 
@@ -36,10 +38,10 @@ const getTransaksi = async () => {
   try {
     const result = await axiosIntance.get("/finance")
     setTransaksi(result.data.data)
-    console.log(result.data);
+
     
   } catch (error) {
-    console.log(error?.response?.data);
+
   }
 }
 
@@ -49,7 +51,15 @@ const getLocalISODate = (date) => {
   return d.toISOString().split('T')[0];
 };
 
-const grafikData = Array.from({length: 7}, (_, i) => {
+const grafikData = filterMode === 'Harian' 
+  ? [
+      { name: "00:00", pemasukan: 0, pengeluaran: 0 },
+      { name: "06:00", pemasukan: 100000, pengeluaran: 0 },
+      { name: "12:00", pemasukan: 0, pengeluaran: 50000 },
+      { name: "18:00", pemasukan: 500000, pengeluaran: 200000 },
+      { name: "23:59", pemasukan: 0, pengeluaran: 0 },
+    ]
+  : Array.from({length: 7}, (_, i) => {
   const date = new Date();
   date.setDate(date.getDate() - (6 - i));
 
@@ -78,10 +88,10 @@ const grafikData = Array.from({length: 7}, (_, i) => {
     <>
       <div className="bg-gray-50 min-h-screen font-sans">
       <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
-      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 relative`}>
+      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 min-h-screen relative`}>
         <MobileHeader onOpenSidebar={() => setSidebarOpen(true)} />
 
-        {isDataLoading && <Spinner />}
+        {isDataLoading && <Spinner sidebarOpen={sidebarOpen} />}
         
         {}
         <div className="mb-6">
@@ -124,13 +134,35 @@ const grafikData = Array.from({length: 7}, (_, i) => {
         </div>
 
         {}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {}
-          <div className="lg:col-span-6 lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <div className="mb-6 flex justify-between items-center">
-               <h3 className="font-bold text-gray-900">Grafik Arus Kas Mingguan</h3>
-               <button className="text-xs text-blue-600 font-medium hover:text-blue-800 transition-colors cursor-pointer border border-blue-100 px-3 py-1.5 rounded-lg bg-blue-50/50">Filter</button>
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+            <div className="mb-6 flex justify-between items-center relative">
+               <div>
+                  <h3 className="font-bold text-gray-900 leading-none">Grafik Arus Kas {filterMode === 'Mingguan' ? 'Mingguan' : 'Harian'}</h3>
+                  <p className="text-xs text-gray-400 mt-1.5">Visualisasi pergerakan uang Anda {filterMode === 'Mingguan' ? '7 hari terakhir' : 'hari ini'}</p>
+               </div>
+               <div className="relative">
+                  <button 
+                    onClick={() => setShowFilter(!showFilter)}
+                    className="text-xs text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition-all cursor-pointer border border-blue-200 px-4 py-2 rounded-xl bg-blue-50/30 flex items-center gap-2"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    Filter: {filterMode}
+                  </button>
+                  {showFilter && (
+                    <div className="absolute top-11 right-0 w-40 bg-white border border-gray-100 rounded-xl shadow-xl z-20 overflow-hidden animate-[fadeIn_0.2s_ease-out]">
+                      {['Mingguan', 'Harian'].map(mode => (
+                        <button
+                          key={mode}
+                          onClick={() => { setFilterMode(mode); setShowFilter(false); }}
+                          className={`w-full text-left px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-gray-50 flex items-center justify-between ${filterMode === mode ? 'text-blue-600 bg-blue-50/30' : 'text-gray-600'}`}
+                        >
+                          {mode}
+                          {filterMode === mode && <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+               </div>
             </div>
             <div className="w-full h-[300px]">
                <ResponsiveContainer width="100%" height="100%">
@@ -178,43 +210,54 @@ const grafikData = Array.from({length: 7}, (_, i) => {
           </div>
           
           {}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col overflow-hidden max-h-[430px]">
-            <div className="flex justify-between items-center p-5 border-b border-gray-100 bg-white z-10 shrink-0">
-              <h3 className="font-bold text-gray-900">Transaksi Terakhir</h3>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col overflow-hidden w-full">
+            <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-white z-10 shrink-0">
+              <div>
+                <h3 className="font-bold text-gray-900 text-lg uppercase tracking-tight">Riwayat Transaksi</h3>
+                <p className="text-xs text-gray-400 mt-1">Daftar arus kas masuk dan keluar Anda</p>
+              </div>
               <button 
                 onClick={() => setShowAllTransaksi(!showAllTransaksi)}
-                className="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+                className="text-xs font-bold text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-xl transition-all border border-blue-100 cursor-pointer"
               >
-                {showAllTransaksi ? "Tutup" : "Lihat Semua"}
+                {showAllTransaksi ? "Tampilkan Sedikit" : "Lihat Semua"}
               </button>
             </div>
             
             <div className="flex flex-col flex-1 divide-y divide-gray-100 bg-white overflow-y-auto">
+            {(showAllTransaksi ? transaksi : transaksi.slice(0, 5)).length === 0 && (
+                <div className="p-12 text-center text-gray-400 text-sm italic">Belum ada catatan transaksi.</div>
+            )}
             {(showAllTransaksi ? transaksi : transaksi.slice(0, 5)).map((item) => (
-                <div key={item.id} className="flex justify-between items-center p-4 hover:bg-gray-50/80 transition-colors cursor-pointer group">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center border ${item.type === 'pemasukan' ? 'bg-green-50/50 border-green-100 text-green-600' : 'bg-red-50/50 border-red-100 text-red-600'}`}>
+                <div key={item.id} className="flex justify-between items-center px-6 py-5 hover:bg-gray-50/80 transition-all cursor-pointer group">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center border shadow-sm ${item.type === 'pemasukan' ? 'bg-green-50/50 border-green-100 text-green-600' : 'bg-red-50/50 border-red-100 text-red-600'}`}>
                       {item.type === 'pemasukan' ? (
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                       ) : (
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
                       )}
                     </div>
                     <div>
-                      <h4 className="font-medium text-[14px] text-gray-800 group-hover:text-blue-600 transition-colors capitalize">{item.category}</h4>
-                      <p className="text-[12px] text-gray-500 mt-0.5">{new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                      <h4 className="font-bold text-sm text-gray-800 group-hover:text-blue-600 transition-colors capitalize">{item.category}</h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold uppercase ${item.type === 'pemasukan' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{item.type}</span>
+                        <p className="text-[12px] text-gray-500">{new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                      </div>
                     </div>
                   </div>
-                  <span className={`font-semibold text-[14px] ${item.type === 'pemasukan' ? 'text-green-600' : 'text-red-600'}`}>
-                   {item.type === 'pemasukan' ? '+' : '-'} Rp {Number(item.amount).toLocaleString('id-ID')}
-                  </span>
+                  <div className="text-right">
+                    <span className={`font-bold text-base block ${item.type === 'pemasukan' ? 'text-green-600' : 'text-red-600'}`}>
+                      {item.type === 'pemasukan' ? '+' : '-'} Rp {Number(item.amount).toLocaleString('id-ID')}
+                    </span>
+                    <p className="text-[10px] text-gray-400 mt-0.5">Berhasil divalidasi</p>
+                  </div>
                 </div>
             ))}
           
             </div>
           </div>
           
-        </div>
       </div>
     </div>
     </>

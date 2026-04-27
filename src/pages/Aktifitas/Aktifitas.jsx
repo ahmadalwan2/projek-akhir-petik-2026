@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from '../../component/Sidebar/Sidebar.jsx';
+import NexoraAlert from '../../component/NexoraAlert/NexoraAlert.jsx';
 import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
 import Spinner from '../../component/Spinner/Spinner.jsx';
 import { FaTrash } from "react-icons/fa";
 import axiosIntance from "../../utils/axiosIntance.jsx";
 
 export default function Aktifitas() {
+  const [alertConfig, setAlertConfig] = useState({ isOpen: false, title: "", message: "", type: "info" });
+  const showAlert = (title, message, type = "info") => setAlertConfig({ isOpen: true, title, message, type });
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isDataLoading, setIsDataLoading] = useState(true);
-  useEffect(() => {
-    const timer = setTimeout(() => setIsDataLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
+  
   const navigate = useNavigate();
   const [activities, setActivities] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -27,44 +27,46 @@ const [idToDelete, setIdToDelete] = useState(null);
   
   useEffect(()=>{
 
-    getActivities()
+    getActivities().finally(() => setIsDataLoading(false))
   },[])
 
   const getActivities = async () => {
+    setIsDataLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 800));
 
     try {
       const result = await axiosIntance.get("/activities")
-      console.log(result.data);
+
       
       const finalData = Array.isArray(result.data) ? result.data : result.data.data
       setActivities(finalData || [])
     } catch (error) {
-      console.log(error?.response?.data);
+
     }
   }
 
 const toggleStatus = async (id) => {
-  console.log('Toggle status untuk id:', id);
+
   
   try {
     const result = await axiosIntance.patch(`/activities/${id}`)
-    console.log(result.data);
+
     
     getActivities()
   } catch (error) {
-    console.log(error?.response?.data);
+
   }
 }
 
 const deleteActivity = async (id) => {
-  console.log('Delete activity untuk id:', id);
+
   
   try {
     const result = await axiosIntance.delete(`/activities/delete/${id}`)
 
     getActivities()
   } catch (error) {
-    console.log(error?.response?.data);
+
   }
 }
 
@@ -112,8 +114,8 @@ const updateStatusOnly = async (e) => {
     setStatusModalOpen(false);
     getActivities();
   } catch (error) {
-    console.log(error);
-    alert("Gagal update status");
+
+    showAlert("Gagal", "Gagal update status", "error");
   }
 };
 
@@ -130,8 +132,8 @@ const handleUpdate = async (e) => {
     setModalOpen(false);
     getActivities();
   } catch (error) {
-    console.log(error);
-    alert("Gagal update data");
+
+    showAlert("Gagal", "Gagal update data", "error");
   }
 };
 
@@ -147,8 +149,8 @@ const handleDeleteExecute = async () => {
     setDeleteModalOpen(false);
     getActivities();
   } catch (error) {
-    console.log(error?.response?.data);
-    alert("Gagal menghapus data");
+
+    showAlert("Gagal", "Gagal menghapus data", "error");
   }
 };
 
@@ -156,10 +158,10 @@ const handleDeleteExecute = async () => {
     <>
       <div className="bg-gray-50 min-h-screen font-sans">
       <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
-      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 relative`}>
+      <div className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-[240px]" : "lg:ml-[80px]"} ml-0 p-6 transition-all duration-300 min-h-screen relative`}>
         <MobileHeader onOpenSidebar={() => setSidebarOpen(true)} />
 
-        {isDataLoading && <Spinner />}
+        {isDataLoading && <Spinner sidebarOpen={sidebarOpen} />}
         
         {}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
@@ -219,9 +221,9 @@ const handleDeleteExecute = async () => {
                     </div>
                   </div>
 
-                 <div className={`col-span-6 lg:col-span-2 text-sm ${act.status === 3 ? 'text-gray-400' : 'text-gray-600'}`}>
-                   {act.categories}
-                 </div>
+                  <div className={`col-span-6 lg:col-span-2 text-sm ${act.status === 3 ? 'text-gray-400' : 'text-gray-600'} capitalize`}>
+                    {act.categories || act.category || "-"}
+                  </div>
 
                 <div className="col-span-6 lg:col-span-2 flex justify-end items-center gap-3">
                     <span 
@@ -399,7 +401,14 @@ const handleDeleteExecute = async () => {
         </div>
       )}
     </div>
-    
+
+      <NexoraAlert 
+        isOpen={alertConfig.isOpen} 
+        onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })} 
+        title={alertConfig.title} 
+        message={alertConfig.message} 
+        type={alertConfig.type} 
+      />
     </>
   );
 }

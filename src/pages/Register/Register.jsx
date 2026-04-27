@@ -24,10 +24,10 @@ export default function Register() {
   const [errors, setErrors] = useState([])
 
   const getFieldError = (field) => {
-    if (field === 'username') return errors.find(e => e.message.toLowerCase().includes('username'))?.message;
-    if (field === 'email') return errors.find(e => e.message.toLowerCase().includes('email'))?.message;
-    if (field === 'password') return errors.find(e => e.message.toLowerCase().includes('password') && !e.message.toLowerCase().includes('konfirmasi') && !e.message.toLowerCase().includes('cocok'))?.message;
-    if (field === 'confirmPassword') return errors.find(e => e.message.toLowerCase().includes('konfirmasi') || e.message.toLowerCase().includes('cocok'))?.message;
+    if (field === 'username') return errors.find(e => e.message.toLowerCase().includes('username'))?.message ? "Username minimal 3 karakter untuk identitas Anda." : null;
+    if (field === 'email') return errors.find(e => e.message.toLowerCase().includes('email'))?.message ? "Gunakan format email yang valid ya." : null;
+    if (field === 'password') return errors.find(e => e.message.toLowerCase().includes('password') && !e.message.toLowerCase().includes('konfirmasi') && !e.message.toLowerCase().includes('cocok'))?.message ? "Password minimal 6 karakter demi keamanan Anda." : null;
+    if (field === 'confirmPassword') return errors.find(e => e.message.toLowerCase().includes('konfirmasi') || e.message.toLowerCase().includes('cocok'))?.message ? "Ups, konfirmasi password tidak sesuai." : null;
     return null;
   }
 
@@ -43,14 +43,14 @@ export default function Register() {
         password,
         "konfirmasi-password": confirmPassword,
       });
-      console.log(result.data);
+
       navigate("/login");
     } catch (error) {
-      console.log(error?.response?.data);
+
       if (error?.response?.data?.errors) {
         setErrors(error.response.data.errors)
       } else {
-        setError(error?.response?.data?.message || "Terjadi kesalahan")
+        setErrors([{ message: error?.response?.data?.message || "Terjadi kesalahan" }])
       }
     } finally {
       setLoading(false)
@@ -87,7 +87,12 @@ export default function Register() {
                 className={`w-full mt-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 ${getFieldError('username') ? 'border-red-500' : 'border-gray-300'}`}
                 onChange={(e) => setUsername(e.target.value)}
               />
-              {getFieldError('username') && <p className="text-xs text-red-500 mt-1">{getFieldError('username')}</p>}
+               {getFieldError('username') && (
+                 <p className="text-[11px] text-red-500 mt-1.5 flex items-center gap-1 font-medium italic">
+                   <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                   {getFieldError('username')}
+                 </p>
+               )}
             </div>
 
             {}
@@ -99,7 +104,12 @@ export default function Register() {
                 className={`w-full mt-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 ${getFieldError('email') ? 'border-red-500' : 'border-gray-300'}`}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              {getFieldError('email') && <p className="text-xs text-red-500 mt-1">{getFieldError('email')}</p>}
+               {getFieldError('email') && (
+                 <p className="text-[11px] text-red-500 mt-1.5 flex items-center gap-1 font-medium italic">
+                   <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                   {getFieldError('email')}
+                 </p>
+               )}
             </div>
 
             {}
@@ -129,7 +139,12 @@ export default function Register() {
                   )}
                 </button>
               </div>
-              {getFieldError('password') && <p className="text-xs text-red-500 mt-1">{getFieldError('password')}</p>}
+               {getFieldError('password') && (
+                 <p className="text-[11px] text-red-500 mt-1.5 flex items-center gap-1 font-medium italic">
+                   <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                   {getFieldError('password')}
+                 </p>
+               )}
             </div>
 
             {}
@@ -159,7 +174,12 @@ export default function Register() {
                   )}
                 </button>
               </div>
-              {getFieldError('confirmPassword') && <p className="text-xs text-red-500 mt-1">{getFieldError('confirmPassword')}</p>}
+               {getFieldError('confirmPassword') && (
+                 <p className="text-[11px] text-red-500 mt-1.5 flex items-center gap-1 font-medium italic">
+                   <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                   {getFieldError('confirmPassword')}
+                 </p>
+               )}
             </div>
 
             {}
