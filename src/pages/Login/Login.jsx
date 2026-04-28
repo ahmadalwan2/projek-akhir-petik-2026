@@ -52,11 +52,10 @@ export default function Login() {
         }
       )
       const token = result.data.token;
-     localStorage.setItem('token', token)
+      localStorage.setItem('token', token)
     
-     const decode = jwtDecode(token)
+      const decode = jwtDecode(token)
 
-      
       saveAuthUser({
         name: decode.username || decode.name || "User",
         email: decode.email || email,
@@ -79,32 +78,26 @@ export default function Login() {
     }
   }
 
-useEffect(()=>{
-  const token = localStorage.getItem("token");
-  if (token) {
-    navigate("/dashboard");
-  } 
-  
-},[navigate])
+  useEffect(()=>{
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard");
+    } 
+  },[navigate])
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-
-      {}
       <div className="flex flex-1 items-center justify-center px-6">
         <div className="w-full max-w-md text-center">
 
-          {}
           <div className="flex justify-center items-center gap-2 mb-6 mt-12">
             <img src="/logo-nexora.png" alt="logo" className="h-7" />
           </div>
 
-          {}
           <h1 className="text-3xl md:text-4xl font-bold mb-10 leading-snug">
             Halo, selamat <br /> datang kembali
           </h1>
 
-          {}
           {generalError && (
              <div className="bg-red-50 border border-red-100 text-red-600 p-4 rounded-xl text-sm mb-6 flex items-start gap-3 animate-[shake_0.5s_ease-in-out]">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mt-0.5 shrink-0">
@@ -117,16 +110,15 @@ useEffect(()=>{
              </div>
           )}
 
-          {}
-          <form className="text-left space-y-4" onSubmit={handleSubmit} noValidate>
-
-            {}
+          <form className="text-left space-y-4" onSubmit={handleSubmit} noValidate autoComplete="off">
             <div>
               <label className="text-sm text-gray-600">Alamat email</label>
               <input
                 type="email"
+                value={email}
                 onChange={(e)=> setEmail(e.target.value)}
-                placeholder="Email"
+                placeholder="nexora@gmail.com"
+                autoComplete="off"
                 className={`w-full mt-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 ${getFieldError('email') ? 'border-red-500' : 'border-gray-300'}`}
               />
                {getFieldError('email') && (
@@ -137,14 +129,15 @@ useEffect(()=>{
                )}
             </div>
 
-            {}
             <div>
               <label className="text-sm text-gray-600">Kata Sandi</label>
               <div className="relative mt-1">
                 <input
                   type={showPassword ? "text" : "password"}
+                  value={password}
                   onChange={(e)=> setPassword(e.target.value)}
-                  placeholder="Password"
+                  placeholder="Masukkan kata sandi"
+                  autoComplete="new-password"
                   className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 ${getFieldError('password') ? 'border-red-500' : 'border-gray-300'}`}
                 />
                 <button
@@ -172,7 +165,6 @@ useEffect(()=>{
               )}
             </div>
 
-            {}
             <div className="flex justify-between items-center text-sm mt-2">
               <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
                 <input 
@@ -191,7 +183,6 @@ useEffect(()=>{
               </button>
             </div>
 
-            {}
             <button
               disabled={loading || !rememberMe}
               type="submit" 
@@ -206,7 +197,6 @@ useEffect(()=>{
 
           </form>
 
-          {}
           <p className="text-sm text-gray-500 mt-6 mb-24">
             Belum punya akun?{" "}
             <span onClick={() => navigate("/register")} className="text-blue-600 cursor-pointer hover:text-blue-800 transition">

@@ -20,7 +20,6 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [agreeTerms, setAgreeTerms] = useState(false)
-
   const [errors, setErrors] = useState([])
 
   const getFieldError = (field) => {
@@ -34,19 +33,16 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true)
-
     setErrors([])
     try {
-      const result = await axiosIntance.post("/auth/register", {
+      await axiosIntance.post("/auth/register", {
         username,
         email,
         password,
         "konfirmasi-password": confirmPassword,
       });
-
       navigate("/login");
     } catch (error) {
-
       if (error?.response?.data?.errors) {
         setErrors(error.response.data.errors)
       } else {
@@ -59,31 +55,24 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-
-      {}
       <div className="flex flex-1 items-center justify-center px-6">
-
         <div className="w-full max-w-md text-center">
-
-          {}
           <div className="flex justify-center items-center gap-2 mb-6">
             <img src="/logo-nexora.png" alt="logo" className="h-6" />
           </div>
 
-          {}
           <h1 className="text-3xl md:text-4xl font-bold mb-10 leading-snug">
             Mulai perjalananmu <br /> bersama kami
           </h1>
 
-          {}
-          <form className="text-left space-y-4" onSubmit={handleRegister}>
-
-             {}
+          <form className="text-left space-y-4" onSubmit={handleRegister} autoComplete="off">
             <div>
               <label className="text-sm text-gray-600">Username</label>
               <input
                 type="text"
-                placeholder="Username"
+                value={username}
+                placeholder="Masukkan username"
+                autoComplete="off"
                 className={`w-full mt-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 ${getFieldError('username') ? 'border-red-500' : 'border-gray-300'}`}
                 onChange={(e) => setUsername(e.target.value)}
               />
@@ -95,12 +84,13 @@ export default function Register() {
                )}
             </div>
 
-            {}
             <div>
               <label className="text-sm text-gray-600">Alamat email</label>
               <input
                 type="email"
-                placeholder="Email"
+                value={email}
+                placeholder="nexora@gmail.com"
+                autoComplete="off"
                 className={`w-full mt-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 ${getFieldError('email') ? 'border-red-500' : 'border-gray-300'}`}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -112,13 +102,14 @@ export default function Register() {
                )}
             </div>
 
-            {}
             <div>
               <label className="text-sm text-gray-600">Password</label>
               <div className="relative mt-1">
                 <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="Password"
+                  value={password}
+                  placeholder="Buat kata sandi"
+                  autoComplete="new-password"
                   className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 ${getFieldError('password') ? 'border-red-500' : 'border-gray-300'}`}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -147,13 +138,14 @@ export default function Register() {
                )}
             </div>
 
-            {}
             <div>
               <label className="text-sm text-gray-600">Konfirmasi Password</label>
               <div className="relative mt-1">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Konfirmasi Password"
+                  value={confirmPassword}
+                  placeholder="Ulangi kata sandi"
+                  autoComplete="new-password"
                   className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 ${getFieldError('confirmPassword') ? 'border-red-500' : 'border-gray-300'}`}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
@@ -182,7 +174,6 @@ export default function Register() {
                )}
             </div>
 
-            {}
             <label className="flex items-start gap-2 text-sm text-gray-600 mt-2 cursor-pointer">
               <input 
                 type="checkbox" 
@@ -202,7 +193,6 @@ export default function Register() {
               </span>
             </label>
 
-            {}
             <button
               disabled={loading || !agreeTerms}
               type="submit"
@@ -214,10 +204,8 @@ export default function Register() {
             >
               Daftar
             </button>
-
           </form>
 
-          {}
           <p className="text-sm text-gray-500 mt-6">
             Sudah punya akun?{" "}
             <span
@@ -227,11 +215,8 @@ export default function Register() {
               Login sekarang
             </span>
           </p>
-
         </div>
-
       </div>
-
     </div>
   );
 }

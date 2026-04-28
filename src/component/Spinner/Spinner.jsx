@@ -13,7 +13,7 @@ export default function Spinner({ sidebarOpen }) {
         <div className="absolute w-20 h-20 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
         <img src="/nexora-tab-logo.svg" className="w-8 h-8 animate-pulse" alt="spinner-logo" />
       </div>
-      <p className="mt-6 text-sm font-bold text-blue-600 animate-pulse tracking-widest uppercase">
+      <p className="mt-16 text-sm font-bold text-blue-600 animate-pulse tracking-[0.2em] uppercase transition-all">
         Memuat Nexora...
       </p>
     </div>

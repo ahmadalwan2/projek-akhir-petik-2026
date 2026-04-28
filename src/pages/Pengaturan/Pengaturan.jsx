@@ -4,7 +4,7 @@ import NexoraAlert from '../../component/NexoraAlert/NexoraAlert.jsx';
 import MobileHeader from "../../component/MobileHeader/MobileHeader.jsx";
 import Spinner from "../../component/Spinner/Spinner.jsx";
 import axiosIntance from "../../utils/axiosIntance.jsx";
-import { saveAuthUser } from "../../utils/authHelper";
+import { saveAuthUser, getAuthUser } from "../../utils/authHelper";
 
 export default function Pengaturan() {
   const [alertConfig, setAlertConfig] = useState({ isOpen: false, title: "", message: "", type: "info" });
@@ -20,13 +20,14 @@ export default function Pengaturan() {
   const [activeTab, setActiveTab] = useState("profil");
   const [isSaving, setIsSaving] = useState(false);
 
+  const initialUser = getAuthUser();
   const [profile, setProfile] = useState({
-    name: "",
-    email: "",
-    role: "",
+    name: initialUser.name || "",
+    email: initialUser.email || "",
+    role: initialUser.role || "",
     location: "",
     bio: "",
-    avatar: "https://i.pravatar.cc/150?img=11",
+    avatar: initialUser.avatar || "/nexora-tab-logo.svg",
     cover: "",
     dailyEmail: true,
     deadlineAlert: true,
@@ -47,19 +48,37 @@ export default function Pengaturan() {
         const currentUser = allUsers.find((u) => u.email === localUser?.email);
 
         if (currentUser) {
-          setProfile((prev) => ({
-            ...prev,
-            name: currentUser.username || localUser?.name || "",
-            email: currentUser.email || localUser?.email || "",
+          const authData = getAuthUser();
+          const updated = {
+            ...profile,
+            name: currentUser.username || localUser?.name || authData.name || "",
+            email: currentUser.email || localUser?.email || authData.email || "",
             bio: currentUser.bio || "",
-            avatar: currentUser.avatar || prev.avatar,
-          }));
+            avatar: currentUser.avatar || authData.avatar,
+            role: currentUser.role || authData.role || "",
+          };
+          setProfile(updated);
+          saveAuthUser(updated); 
         }
       } catch (error) {
         console.error(error?.response || "Gagal sinkronisasi data");
       }
     };
+
     fetchUserData();
+
+    const handleUpdate = () => {
+      const updatedUser = getAuthUser();
+      setProfile(prev => ({
+        ...prev,
+        name: updatedUser.name,
+        avatar: updatedUser.avatar,
+        role: updatedUser.role
+      }));
+    };
+
+    window.addEventListener("userUpdate", handleUpdate);
+    return () => window.removeEventListener("userUpdate", handleUpdate);
   }, []);
 
   const handleInputChange = (e) => {
@@ -88,6 +107,7 @@ export default function Pengaturan() {
         username: profile.name,
         email: profile.email,
         bio: profile.bio,
+        avatar: profile.avatar,
       });
 
       saveAuthUser(profile);
@@ -136,18 +156,20 @@ export default function Pengaturan() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`whitespace-nowrap lg:text-left px-5 py-3 rounded-xl text-sm transition-all font-semibold border-b-4 lg:border-b-0 lg:border-l-4 capitalize flex items-center gap-3 ${
-                      activeTab === tab ? "bg-blue-600 text-white border-blue-800 shadow-md shadow-blue-200" : "border-transparent text-gray-500 hover:bg-white hover:text-gray-900"
+                    className={`group whitespace-nowrap lg:text-left px-6 py-3.5 rounded-2xl text-sm transition-all duration-300 font-bold capitalize flex items-center gap-3 active:scale-95 ${
+                      activeTab === tab 
+                        ? "bg-blue-600 text-white shadow-sm" 
+                        : "text-gray-500 hover:bg-white hover:text-blue-600"
                     }`}
                   >
                     {tab === "profil" ? (
                       <>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg className="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         Profil Saya
                       </>
                     ) : (
                       <>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg className="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         Keamanan & Sandi
                       </>
                     )}
@@ -160,12 +182,18 @@ export default function Pengaturan() {
               {activeTab === "profil" && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-[fadeIn_0.2s_ease-out]">
                   <div
-                    className={`h-40 w-full relative ${profile.cover ? "" : "bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700"}`}
+                    className={`h-44 w-full relative flex items-center justify-center overflow-hidden ${profile.cover ? "" : "bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200"}`}
                     style={profile.cover ? { backgroundImage: `url(${profile.cover})`, backgroundSize: "cover", backgroundPosition: "center" } : {}}
                   >
-                    <div className="absolute inset-0 bg-black/10"></div>
-                    <label className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-3 py-1.5 rounded-lg text-white text-xs cursor-pointer border border-white/30 shadow-sm transition-all">
-                      Ubah Cover
+                    {!profile.cover && (
+                      <div className="opacity-40 transform scale-[3] rotate-12 grayscale brightness-50">
+                         <img src="/nexora-tab-logo.svg" className="w-20 h-20" alt="bg-icon" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/5"></div>
+                    <label className="absolute top-6 right-6 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-2xl text-[10px] font-black tracking-widest uppercase cursor-pointer transition-all active:scale-95 flex items-center gap-2.5">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                      UBAH COVER
                       <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, "cover")} />
                     </label>
                   </div>
@@ -173,22 +201,32 @@ export default function Pengaturan() {
                   <div className="px-8 pb-8">
                     <div className="flex justify-between items-end -mt-12 mb-8">
                       <div className="relative group">
-                        <img src={profile.avatar || "https://i.pravatar.cc/150?img=11"} className="w-24 h-24 rounded-full border-4 border-white shadow-md bg-white object-cover" />
-                        <label className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer border-4 border-white">
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <img 
+                          src={profile.avatar} 
+                          className="w-24 h-24 rounded-full border-4 border-white shadow-xl bg-white object-cover transition-transform group-hover:scale-105" 
+                        />
+                        <label className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center cursor-pointer border-4 border-white backdrop-blur-[2px]">
+                          <svg className="w-8 h-8 text-white transition-transform group-hover:scale-110 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                           </svg>
                           <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, "avatar")} />
                         </label>
                       </div>
-                      <button onClick={saveProfileData} disabled={isSaving} className={`px-4 py-2 rounded-lg text-white text-sm font-medium transition-all shadow-sm ${isSaving ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"}`}>
-                        {isSaving ? "Menyimpan..." : "Simpan Profil"}
+                      <button 
+                        onClick={saveProfileData} 
+                        disabled={isSaving} 
+                        className={`px-8 py-3.5 rounded-2xl text-white text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 ${isSaving ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"}`}
+                      >
+                        {isSaving ? "MENYIMPAN..." : "SIMPAN PROFIL"}
                       </button>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
                       <div>
-                        <label className="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">Nama Lengkap</label>
+                        <label className="flex items-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5">
+                          Nama Lengkap
+                          <svg className="w-3 h-3 text-blue-500 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                        </label>
                         <input type="text" name="name" value={profile.name} onChange={handleInputChange} className="w-full px-5 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all shadow-sm" placeholder="Masukkan nama lengkap" />
                       </div>
                       <div>
@@ -198,7 +236,10 @@ export default function Pengaturan() {
                     </div>
 
                     <div className="mt-2">
-                      <label className="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">Bio Singkat</label>
+                      <label className="flex items-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5">
+                        Bio Singkat
+                        <svg className="w-3 h-3 text-blue-500 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                      </label>
                       <textarea name="bio" value={profile.bio} onChange={handleInputChange} rows="4" className="w-full px-5 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 resize-none transition-all shadow-sm" placeholder="Ceritakan sedikit tentang dirimu..." />
                     </div>
                   </div>
@@ -212,8 +253,11 @@ export default function Pengaturan() {
                     <input type="password" placeholder="Sandi Lama" value={password.old} onChange={(e) => setPassword({ ...password, old: e.target.value })} className="w-full px-4 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-blue-100" />
                     <input type="password" placeholder="Sandi Baru" value={password.new} onChange={(e) => setPassword({ ...password, new: e.target.value })} className="w-full px-4 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-blue-100" />
                     <input type="password" placeholder="Konfirmasi Sandi Baru" value={password.confirm} onChange={(e) => setPassword({ ...password, confirm: e.target.value })} className="w-full px-4 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-blue-100" />
-                    <button onClick={handleUpdatePassword} className="w-fit px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-sm transition-all">
-                      Perbarui Sandi
+                    <button 
+                      onClick={handleUpdatePassword} 
+                      className="w-full sm:w-fit px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
+                    >
+                      PERBARUI SANDI
                     </button>
                   </div>
                 </div>

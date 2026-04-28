@@ -20,10 +20,12 @@ export default function Sidebar({ open, setOpen }) {
   useEffect(() => {
     const handleSync = () => setUser(getAuthUser());
     window.addEventListener("storage", handleSync);
-    // Listen for local changes as well
+    window.addEventListener("userUpdate", handleSync);
+    
     const interval = setInterval(handleSync, 2000);
     return () => {
       window.removeEventListener("storage", handleSync);
+      window.removeEventListener("userUpdate", handleSync);
       clearInterval(interval);
     };
   }, []);
@@ -120,10 +122,17 @@ export default function Sidebar({ open, setOpen }) {
                className={`w-10 h-10 rounded-xl object-cover border-2 border-white shadow-sm transition-transform group-hover:scale-105 ${!open && "mx-auto"}`}
                alt="avatar"
             />
-            {open && (
+             {open && (
               <div className="overflow-hidden">
                 <p className="font-bold text-sm text-gray-900 truncate uppercase tracking-tight">{user.name}</p>
-                <p className="text-[10px] text-gray-400 font-bold truncate tracking-widest uppercase">Akun Aktif</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                   {user.role === "admin" && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                   )}
+                   <p className={`text-[10px] font-bold truncate tracking-widest uppercase ${user.role === "admin" ? "text-emerald-600" : "text-gray-400"}`}>
+                      {user.role === "admin" ? "Administrator" : "Akun Aktif"}
+                   </p>
+                </div>
               </div>
             )}
           </div>
