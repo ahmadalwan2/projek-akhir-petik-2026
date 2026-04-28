@@ -25,7 +25,7 @@ export default function Sidebar({ open, setOpen }) {
 
   return (
     <>
-      {}
+
       {open && (
         <div 
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -40,9 +40,9 @@ export default function Sidebar({ open, setOpen }) {
           : "w-[80px] -translate-x-full lg:translate-x-0 lg:items-center"
         }`}
       >
-        {}
+  
         <div>
-          {}
+    
           <div
             className={`flex items-center mb-6 ${
               open ? "justify-between" : "justify-center"
@@ -69,10 +69,10 @@ export default function Sidebar({ open, setOpen }) {
             )}
           </div>
 
-          {}
+    
           <div className="h-[1px] bg-gray-200 lg:bg-gray-300 mb-6 font-thin"></div>
 
-          {}
+    
           <div className="flex flex-col gap-2">
             {menus.map((item, index) => {
               const isActive = location.pathname.includes(item.path);
@@ -102,7 +102,7 @@ export default function Sidebar({ open, setOpen }) {
           </div>
         </div>
 
-        {}
+  
         <div
           onClick={() => {
             localStorage.removeItem("token");

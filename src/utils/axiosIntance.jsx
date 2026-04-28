@@ -16,7 +16,7 @@ axiosIntance.interceptors.request.use((config) => {
 axiosIntance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if(error.response.status === 401){
+        if(error.response && error.response.status === 401){
             localStorage.removeItem("token");
             window.location.href = "/login";
         }

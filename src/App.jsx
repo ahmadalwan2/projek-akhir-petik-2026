@@ -16,35 +16,35 @@ export default function App() {
     <BrowserRouter>
       <Routes>
 
-        {}
+
         <Route path="/" element={<LandingPage />} />
 
-        {}
+
         <Route path="/login" element={<Login />} />
 
-        {}
+
         <Route path="/lupa-password" element={<LupaPassword />} />
 
-        {}
+
         <Route path="/register" element={<Register />} />
         
-        {}
+
         <Route path="/syarat-ketentuan" element={<Syarat_danKetentuan />} />
 
-        {}
+
         <Route path="/dashboard" element={<Dashboard />} />
 
-        {}
+
         <Route path="/aktifitas" element={<Aktifitas />} />
         <Route path="/aktifitas/tambah" element={<TambahAktifitas />} />
 
-        {}
+
         <Route path="/notifikasi" element={<Notifikasi />} />
 
-        {}
+
         <Route path="/keuangan" element={<Keuangan />} />
 
-        {}
+
         <Route path="/pengaturan" element={<Pengaturan />} />
 
       </Routes>

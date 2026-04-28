@@ -13,7 +13,7 @@ export default function Keuangan() {
   const [chartData, setChartData] = useState([])
   const [transaksi, setTransaksi] = useState([])
   const [showAllTransaksi, setShowAllTransaksi] = useState(false)
-  const [filterMode, setFilterMode] = useState("Mingguan") // Mingguan | Harian
+  const [filterMode, setFilterMode] = useState("Mingguan")
   const [showFilter, setShowFilter] = useState(false)
 
   useEffect(() => {
@@ -21,69 +21,61 @@ export default function Keuangan() {
     getTransaksi()
   }, [])
 
-const getKeuangan = async () => {
+  const getKeuangan = async () => {
     setIsDataLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setIsDataLoading(true);
-  try {
-    const result = await axiosIntance.get("/dashboard")
+    await new Promise(resolve => setTimeout(resolve, 300));
+    try {
+      const result = await axiosIntance.get("/dashboard")
       setKeuangan(result.data.data.ringkasanKeuangan)
-
-  } catch (error) {
-
+    } catch (error) {
+      console.error(error);
+    }
   }
-}
 
-const getTransaksi = async () => {
-  try {
-    const result = await axiosIntance.get("/finance")
-    setTransaksi(result.data.data)
-
-    
-  } catch (error) {
-
+  const getTransaksi = async () => {
+    try {
+      const result = await axiosIntance.get("/finance")
+      setTransaksi(result.data.data)
+    } catch (error) {
+      console.error(error);
+    }
   }
-}
 
-const getLocalISODate = (date) => {
-  const d = new Date(date);
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString().split('T')[0];
-};
-
-const grafikData = filterMode === 'Harian' 
-  ? [
-      { name: "00:00", pemasukan: 0, pengeluaran: 0 },
-      { name: "06:00", pemasukan: 100000, pengeluaran: 0 },
-      { name: "12:00", pemasukan: 0, pengeluaran: 50000 },
-      { name: "18:00", pemasukan: 500000, pengeluaran: 200000 },
-      { name: "23:59", pemasukan: 0, pengeluaran: 0 },
-    ]
-  : Array.from({length: 7}, (_, i) => {
-  const date = new Date();
-  date.setDate(date.getDate() - (6 - i));
-
-  const tgl = date.toLocaleDateString('id-ID', {day: 'numeric', month: 'long'});
-  const day = date.toLocaleDateString('id-ID', {weekday: 'short'});
-
-  const targetDateStr = getLocalISODate(date);
-
-  const dataHarian = transaksi.filter(trx => {
-    const trxDate = new Date(trx.createdAt);
-    return getLocalISODate(trxDate) === targetDateStr;
-  });
-
-  const pemasukan = dataHarian.filter(trx => trx.type === 'pemasukan').reduce((acc, trx) => acc + Number(trx.amount), 0);
-  const pengeluaran = dataHarian.filter(trx => trx.type === 'pengeluaran').reduce((acc, trx) => acc + Number(trx.amount), 0);
-
-  return {
-    dateObj: date,
-    name: day,
-    tgl,
-    pemasukan,
-    pengeluaran,
+  const getLocalISODate = (date) => {
+    const d = new Date(date);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split('T')[0];
   };
-})
+
+  const grafikData = filterMode === 'Harian' 
+    ? [
+        { name: "00:00", pemasukan: 0, pengeluaran: 0 },
+        { name: "06:00", pemasukan: 100000, pengeluaran: 0 },
+        { name: "12:00", pemasukan: 0, pengeluaran: 50000 },
+        { name: "18:00", pemasukan: 500000, pengeluaran: 200000 },
+        { name: "23:59", pemasukan: 0, pengeluaran: 0 },
+      ]
+    : Array.from({length: 7}, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    const tgl = date.toLocaleDateString('id-ID', {day: 'numeric', month: 'long'});
+    const day = date.toLocaleDateString('id-ID', {weekday: 'short'});
+    const targetDateStr = getLocalISODate(date);
+    const dataHarian = transaksi.filter(trx => {
+      const trxDate = new Date(trx.createdAt);
+      return getLocalISODate(trxDate) === targetDateStr;
+    });
+    const pemasukan = dataHarian.filter(trx => trx.type === 'pemasukan').reduce((acc, trx) => acc + Number(trx.amount), 0);
+    const pengeluaran = dataHarian.filter(trx => trx.type === 'pengeluaran').reduce((acc, trx) => acc + Number(trx.amount), 0);
+    return {
+      dateObj: date,
+      name: day,
+      tgl,
+      pemasukan,
+      pengeluaran,
+    };
+  })
+
   return (
     <>
       <div className="bg-gray-50 min-h-screen font-sans">
@@ -93,16 +85,14 @@ const grafikData = filterMode === 'Harian'
 
         {isDataLoading && <Spinner sidebarOpen={sidebarOpen} />}
         
-        {}
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Keuangan</h2>
           <p className="text-sm text-gray-500 mt-1">Pencatatan dan ringkasan arus kas Anda</p>
         </div>
 
-        {}
-        
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
+          <div className="bg-white p-5 rounded-2xl border-2 border-slate-100 flex flex-col justify-between relative overflow-hidden">
+             <div className="absolute top-0 right-0 w-20 h-20 bg-blue-50/50 rounded-full blur-xl -mr-8 -mt-8"></div>
             <div className="flex items-center gap-2 mb-2 text-gray-500">
               <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
               <p className="text-sm font-medium">Saldo Saat Ini</p>
@@ -112,8 +102,9 @@ const grafikData = filterMode === 'Harian'
             </h2>
           </div>
 
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-            <div className="flex items-center gap-2 mb-2 text-gray-500">
+          <div className="bg-white p-5 rounded-2xl border-2 border-slate-100 flex flex-col justify-between relative overflow-hidden">
+             <div className="absolute top-0 right-0 w-20 h-20 bg-green-50/50 rounded-full blur-xl -mr-8 -mt-8"></div>
+             <div className="flex items-center gap-2 mb-2 text-gray-500">
               <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
               <p className="text-sm font-medium">Pemasukan Bulan Ini</p>
             </div>
@@ -122,8 +113,9 @@ const grafikData = filterMode === 'Harian'
             </h2>
           </div>
 
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-            <div className="flex items-center gap-2 mb-2 text-gray-500">
+          <div className="bg-white p-5 rounded-2xl border-2 border-slate-100 flex flex-col justify-between relative overflow-hidden">
+             <div className="absolute top-0 right-0 w-20 h-20 bg-red-50/50 rounded-full blur-xl -mr-8 -mt-8"></div>
+             <div className="flex items-center gap-2 mb-2 text-gray-500">
               <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
               <p className="text-sm font-medium">Pengeluaran Bulan Ini</p>
             </div>
@@ -133,8 +125,7 @@ const grafikData = filterMode === 'Harian'
           </div>
         </div>
 
-        {}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+        <div className="bg-white p-6 rounded-2xl border-2 border-slate-100 mb-6">
             <div className="mb-6 flex justify-between items-center relative">
                <div>
                   <h3 className="font-bold text-gray-900 leading-none">Grafik Arus Kas {filterMode === 'Mingguan' ? 'Mingguan' : 'Harian'}</h3>
@@ -209,8 +200,7 @@ const grafikData = filterMode === 'Harian'
             </div>
           </div>
           
-          {}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col overflow-hidden w-full">
+          <div className="bg-white rounded-2xl border-2 border-slate-100 flex flex-col overflow-hidden w-full">
             <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-white z-10 shrink-0">
               <div>
                 <h3 className="font-bold text-gray-900 text-lg uppercase tracking-tight">Riwayat Transaksi</h3>
@@ -218,7 +208,7 @@ const grafikData = filterMode === 'Harian'
               </div>
               <button 
                 onClick={() => setShowAllTransaksi(!showAllTransaksi)}
-                className="text-xs font-bold text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-xl transition-all border border-blue-100 cursor-pointer"
+                className="text-[10px] font-black text-white bg-[#0052FF] hover:bg-blue-700 px-5 py-2.5 rounded-xl transition-all shadow-[0_8px_20px_-6px_rgba(0,82,255,0.4)] hover:shadow-[0_12px_25px_-4px_rgba(0,82,255,0.5)] hover:-translate-y-0.5 active:translate-y-0 uppercase tracking-widest cursor-pointer"
               >
                 {showAllTransaksi ? "Tampilkan Sedikit" : "Lihat Semua"}
               </button>
@@ -254,10 +244,8 @@ const grafikData = filterMode === 'Harian'
                   </div>
                 </div>
             ))}
-          
             </div>
           </div>
-          
       </div>
     </div>
     </>

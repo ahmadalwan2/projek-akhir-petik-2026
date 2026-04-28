@@ -135,7 +135,7 @@ export default function Notifikasi() {
 
         {isDataLoading && <Spinner sidebarOpen={sidebarOpen} />}
         
-        {}
+
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Kabar Terbaru</h2>
@@ -170,7 +170,7 @@ export default function Notifikasi() {
           </div>
         </div>
 
-        {}
+
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden max-w-4xl">
           <div className="divide-y divide-gray-100">
             {notifications.length === 0 ? (
@@ -185,7 +185,7 @@ export default function Notifikasi() {
                 className={`p-5 flex gap-4 transition-colors cursor-pointer ${isRead ? 'bg-white hover:bg-gray-50' : 'bg-blue-50/50 hover:bg-blue-50'}`}
               >
                 
-                {}
+
                 <div className="flex-shrink-0 mt-1">
                   {notif.type === 'success' && (
                     <div className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
@@ -194,7 +194,7 @@ export default function Notifikasi() {
                   )}
                   {notif.type === 'warning' && (
                     <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 900 11-18 0 9 9 0 0118 0z"></path></svg>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                   )}
                   {notif.type === 'info' && (
@@ -209,7 +209,7 @@ export default function Notifikasi() {
                   )}
                 </div>
 
-                {}
+
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
                     <h4 className={`text-base ${isRead ? 'font-medium text-gray-800' : 'font-bold text-gray-900'}`}>
@@ -222,7 +222,7 @@ export default function Notifikasi() {
                   </p>
                 </div>
 
-                {}
+
                 {!isRead && (
                   <div className="flex-shrink-0 flex items-center">
                     <div className="w-2.5 h-2.5 rounded-full bg-blue-600"></div>
