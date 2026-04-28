@@ -18,6 +18,7 @@ import Sidebar from '../../component/Sidebar/Sidebar.jsx';
 import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
 import Spinner from '../../component/Spinner/Spinner.jsx';
 import axiosIntance from "../../utils/axiosIntance.jsx";
+import { getAuthUser } from "../../utils/authHelper";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -33,16 +34,8 @@ export default function Dashboard() {
     }
   };
 
-  const [profileName, setProfileName] = useState(() => {
-    const meta = getCache("nexora_meta", null);
-    const user = getCache("nexora_user", null);
-    return meta?.name || user?.name || localStorage.getItem("userName") || "User";
-  });
-
-  const [profileAvatar, setProfileAvatar] = useState(() => {
-    const meta = getCache("nexora_meta", null);
-    return meta?.avatar || `https://ui-avatars.com/api/?name=${profileName || 'U'}&background=random`;
-  });
+  const [profileName, setProfileName] = useState(getAuthUser().name);
+  const [profileAvatar, setProfileAvatar] = useState(getAuthUser().avatar);
 
   const [completedTasks, setCompletedTasks] = useState(() => getCache("dash_completed", 0));
   const [mode, setMode] = useState("harian");
@@ -57,20 +50,15 @@ export default function Dashboard() {
       setIsDataLoading(true);
       try {
         await new Promise(resolve => setTimeout(resolve, 300));
-        const response = await axiosIntance.get("/dashboard");
-        const resData = response.data.data || response.data;
-        const data = resData || {};
+        const res = await axiosIntance.get("/dashboard");
+        const userData = res.data.data;
         
-        if (data) {
-          const userData = data.user || {};
-          const userName = userData.nama || userData.name || "User";
-          setProfileName(userName);
-          
-          const meta = getCache("nexora_meta", {});
-          const avatar = userData.avatar || meta.avatar || `https://ui-avatars.com/api/?name=${userName}&background=random`;
-          setProfileAvatar(avatar);
+        if (userData) {
+          const authUser = getAuthUser();
+          setProfileName(authUser.name);
+          setProfileAvatar(authUser.avatar);
 
-          const ringkasanAktifitas = data.ringkasanAktivitas || {};
+          const ringkasanAktifitas = userData.ringkasanAktivitas || {};
           const totalTugas = ringkasanAktifitas.total_tugas || 0;
           const completed = ringkasanAktifitas.detail_status?.completed || 0;
           

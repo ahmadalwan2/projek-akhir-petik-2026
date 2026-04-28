@@ -4,6 +4,7 @@ import NexoraAlert from '../../component/NexoraAlert/NexoraAlert.jsx';
 import MobileHeader from "../../component/MobileHeader/MobileHeader.jsx";
 import Spinner from "../../component/Spinner/Spinner.jsx";
 import axiosIntance from "../../utils/axiosIntance.jsx";
+import { saveAuthUser } from "../../utils/authHelper";
 
 export default function Pengaturan() {
   const [alertConfig, setAlertConfig] = useState({ isOpen: false, title: "", message: "", type: "info" });
@@ -89,8 +90,7 @@ export default function Pengaturan() {
         bio: profile.bio,
       });
 
-      localStorage.setItem("nexora_user", JSON.stringify({ name: profile.name, email: profile.email }));
-      localStorage.setItem("nexora_meta", JSON.stringify(profile));
+      saveAuthUser(profile);
       showAlert("Berhasil", "Profil berhasil diperbarui!", "success");
     } catch (error) {
       showAlert("Waduh!", error.response?.data?.message || "Terjadi kesalahan", "error");

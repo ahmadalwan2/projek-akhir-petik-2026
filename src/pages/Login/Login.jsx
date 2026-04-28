@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-
 import axiosIntance from "../../utils/axiosIntance";
+import { saveAuthUser } from "../../utils/authHelper";
 
 export default function Login() {
   const [email,setEmail] = useState("")
@@ -57,10 +57,11 @@ export default function Login() {
      const decode = jwtDecode(token)
 
       
-      localStorage.setItem("nexora_user", JSON.stringify({
+      saveAuthUser({
         name: decode.username || decode.name || "User",
-        email: decode.email || email
-      }));
+        email: decode.email || email,
+        avatar: decode.avatar || ""
+      });
       
       navigate('/dashboard')
       

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaThLarge,
   FaFire,
@@ -10,10 +10,23 @@ import {
 } from "react-icons/fa";
 import { FaMinimize } from "react-icons/fa6";
 import { useNavigate, useLocation } from "react-router-dom";
+import { getAuthUser } from "../../utils/authHelper";
 
 export default function Sidebar({ open, setOpen }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [user, setUser] = useState(getAuthUser());
+
+  useEffect(() => {
+    const handleSync = () => setUser(getAuthUser());
+    window.addEventListener("storage", handleSync);
+    // Listen for local changes as well
+    const interval = setInterval(handleSync, 2000);
+    return () => {
+      window.removeEventListener("storage", handleSync);
+      clearInterval(interval);
+    };
+  }, []);
 
   const menus = [
     { icon: <FaThLarge />, label: "Dashboard", path: "/dashboard" },
@@ -25,7 +38,6 @@ export default function Sidebar({ open, setOpen }) {
 
   return (
     <>
-
       {open && (
         <div 
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -40,17 +52,15 @@ export default function Sidebar({ open, setOpen }) {
           : "w-[80px] -translate-x-full lg:translate-x-0 lg:items-center"
         }`}
       >
-  
         <div>
-    
           <div
-            className={`flex items-center mb-6 ${
+            className={`flex items-center mb-6 px-1 ${
               open ? "justify-between" : "justify-center"
             }`}
           >
             {open ? (
               <>
-                <img src="/logo-nexora.png" className="h-8 cursor-pointer" alt="Logo" />
+                <img src="/logo-nexora.png" className="h-7 cursor-pointer" alt="Logo" />
                 <button
                   onClick={() => setOpen(false)}
                   className="text-gray-400 hover:text-blue-500 cursor-pointer lg:block"
@@ -69,10 +79,8 @@ export default function Sidebar({ open, setOpen }) {
             )}
           </div>
 
-    
           <div className="h-[1px] bg-gray-200 lg:bg-gray-300 mb-6 font-thin"></div>
 
-    
           <div className="flex flex-col gap-2">
             {menus.map((item, index) => {
               const isActive = location.pathname.includes(item.path);
@@ -89,7 +97,7 @@ export default function Sidebar({ open, setOpen }) {
                   ${
                     isActive
                       ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
-                      : "text-gray-500 hover:bg-blue-50 hover:text-blue-600"
+                      : "text-gray-500 hover:bg-white hover:text-blue-600 hover:shadow-sm"
                   }`}
                 >
                   <span className={`${isActive ? "" : "opacity-70 group-hover:opacity-100"}`}>
@@ -102,18 +110,38 @@ export default function Sidebar({ open, setOpen }) {
           </div>
         </div>
 
-  
-        <div
-          onClick={() => {
-            localStorage.removeItem("token");
-            navigate("/");
-          }}
-          className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 group
-          ${open ? "justify-start" : "justify-center"}
-          text-red-500 hover:bg-red-50`}
-        >
-          <FaSignOutAlt className="group-hover:scale-110 transition-transform" />
-          {open && <span className="font-medium text-[15px]">Keluar</span>}
+        <div>
+          <div 
+            onClick={() => navigate("/pengaturan")}
+            className={`flex items-center gap-3 p-2 mb-4 rounded-xl cursor-pointer hover:bg-white transition-all group ${open ? "bg-white/50 border border-gray-100" : "justify-center"}`}
+          >
+            <img 
+               src={user.avatar} 
+               className={`w-10 h-10 rounded-xl object-cover border-2 border-white shadow-sm transition-transform group-hover:scale-105 ${!open && "mx-auto"}`}
+               alt="avatar"
+            />
+            {open && (
+              <div className="overflow-hidden">
+                <p className="font-bold text-sm text-gray-900 truncate uppercase tracking-tight">{user.name}</p>
+                <p className="text-[10px] text-gray-400 font-bold truncate tracking-widest uppercase">Akun Aktif</p>
+              </div>
+            )}
+          </div>
+
+          <div
+            onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("nexora_user");
+              localStorage.removeItem("nexora_meta");
+              navigate("/");
+            }}
+            className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 group
+            ${open ? "justify-start" : "justify-center"}
+            text-red-500 hover:bg-red-50`}
+          >
+            <FaSignOutAlt className="group-hover:scale-110 transition-transform" />
+            {open && <span className="font-medium text-[15px]">Keluar</span>}
+          </div>
         </div>
       </div>
     </>
