@@ -16,7 +16,12 @@ export default defineConfig({
         rewrite: (path)=> path.replace(/^\/api/, "/api")
       }
     }
-  }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './vitest.setup.js',
+  },
 })
 
 
