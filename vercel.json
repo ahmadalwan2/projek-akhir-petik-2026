@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "https://kca.petik.or.id/api/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

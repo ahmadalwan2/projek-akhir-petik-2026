@@ -10,43 +10,25 @@ import Pengaturan from "./pages/Pengaturan/Pengaturan.jsx";
 import Notifikasi from "./pages/Notifikasi/Notifikasi.jsx";
 import Syarat_danKetentuan from "./pages/Syarat_danKetentuan/Syarat_danKetentuan.jsx";
 import LupaPassword from "./pages/LupaPassword/LupaPassword.jsx";
+import ProtectedRoute from "./component/ProtectedRoute.jsx";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-
-
         <Route path="/" element={<LandingPage />} />
-
-
         <Route path="/login" element={<Login />} />
-
-
         <Route path="/lupa-password" element={<LupaPassword />} />
-
-
         <Route path="/register" element={<Register />} />
-        
-
         <Route path="/syarat-ketentuan" element={<Syarat_danKetentuan />} />
 
-
-        <Route path="/dashboard" element={<Dashboard />} />
-
-
-        <Route path="/aktifitas" element={<Aktifitas />} />
-        <Route path="/aktifitas/tambah" element={<TambahAktifitas />} />
-
-
-        <Route path="/notifikasi" element={<Notifikasi />} />
-
-
-        <Route path="/keuangan" element={<Keuangan />} />
-
-
-        <Route path="/pengaturan" element={<Pengaturan />} />
-
+        {/* Protected Routes */}
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/aktifitas" element={<ProtectedRoute><Aktifitas /></ProtectedRoute>} />
+        <Route path="/aktifitas/tambah" element={<ProtectedRoute><TambahAktifitas /></ProtectedRoute>} />
+        <Route path="/notifikasi" element={<ProtectedRoute><Notifikasi /></ProtectedRoute>} />
+        <Route path="/keuangan" element={<ProtectedRoute><Keuangan /></ProtectedRoute>} />
+        <Route path="/pengaturan" element={<ProtectedRoute><Pengaturan /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );
