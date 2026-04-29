@@ -215,8 +215,6 @@ export default function LandingPage() {
             return (
               <div
                 key={index}
-                data-aos="fade-up"
-                data-aos-delay={index * 50}
                 onClick={() => setOpenIndex(isOpen ? null : index)}
                 className={`p-5 rounded-xl cursor-pointer transition-all duration-300
                   ${isOpen ? "bg-gray-100" : "bg-white hover:bg-gray-50"}
