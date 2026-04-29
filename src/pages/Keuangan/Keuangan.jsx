@@ -3,7 +3,7 @@ import Sidebar from '../../component/Sidebar/Sidebar.jsx';
 import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
 import Spinner from '../../component/Spinner/Spinner.jsx';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
-import axiosIntance from "../../utils/axiosIntance.jsx"
+import axiosInstance from "../../utils/axiosInstance.jsx"
 
 export default function Keuangan() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -23,9 +23,8 @@ export default function Keuangan() {
 
   const getKeuangan = async () => {
     setIsDataLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 300));
     try {
-      const result = await axiosIntance.get("/dashboard")
+      const result = await axiosInstance.get("/dashboard")
       setKeuangan(result.data.data.ringkasanKeuangan)
     } catch (error) {
       console.error(error);
@@ -34,7 +33,7 @@ export default function Keuangan() {
 
   const getTransaksi = async () => {
     try {
-      const result = await axiosIntance.get("/finance")
+      const result = await axiosInstance.get("/finance")
       setTransaksi(result.data.data)
     } catch (error) {
       console.error(error);
@@ -50,10 +49,12 @@ export default function Keuangan() {
   const grafikData = filterMode === 'Harian' 
     ? [
         { name: "00:00", pemasukan: 0, pengeluaran: 0 },
-        { name: "06:00", pemasukan: 100000, pengeluaran: 0 },
-        { name: "12:00", pemasukan: 0, pengeluaran: 50000 },
-        { name: "18:00", pemasukan: 500000, pengeluaran: 200000 },
-        { name: "23:59", pemasukan: 0, pengeluaran: 0 },
+        { 
+          name: "Sekarang", 
+          pemasukan: transaksi.filter(t => t.type === 'pemasukan' && getLocalISODate(new Date(t.createdAt)) === getLocalISODate(new Date())).reduce((a, b) => a + Number(b.amount), 0),
+          pengeluaran: transaksi.filter(t => t.type === 'pengeluaran' && getLocalISODate(new Date(t.createdAt)) === getLocalISODate(new Date())).reduce((a, b) => a + Number(b.amount), 0)
+        },
+        { name: "Nanti", pemasukan: 0, pengeluaran: 0 },
       ]
     : Array.from({length: 7}, (_, i) => {
     const date = new Date();

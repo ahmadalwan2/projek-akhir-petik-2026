@@ -4,7 +4,7 @@ import Sidebar from '../../component/Sidebar/Sidebar.jsx';
 import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
 import Spinner from '../../component/Spinner/Spinner.jsx';
 import NexoraAlert from '../../component/NexoraAlert/NexoraAlert.jsx';
-import axiosIntance from "../../utils/axiosIntance.jsx";
+import axiosInstance from "../../utils/axiosInstance.jsx";
 
 export default function TambahAktifitas() {
   const [alertConfig, setAlertConfig] = useState({ isOpen: false, title: "", message: "", type: "info" });
@@ -13,14 +13,14 @@ export default function TambahAktifitas() {
   const [isDataLoading, setIsDataLoading] = useState(true);
   
   useEffect(() => {
-    const timer = setTimeout(() => setIsDataLoading(false), 400);
-    return () => clearTimeout(timer);
+    setIsDataLoading(false);
   }, []);
 
   const navigate = useNavigate();
   const [title, setTitle]= useState("");
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState("");
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -50,7 +50,7 @@ export default function TambahAktifitas() {
     setLoading(true);
     setErrors({});
     try {
-      await axiosIntance.post("/activities/create", {
+      await axiosInstance.post("/activities/create", {
         title,
         description,
         categories
@@ -111,23 +111,43 @@ export default function TambahAktifitas() {
                 )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5">
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="kategori">Kategori</label>
-                  <div className="relative">
-                    <select 
-                      id="kategori"
-                      value={categories}
-                      onChange={(e)=> setCategories(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all duration-200 text-sm text-gray-600 appearance-none"
-                    >
-                      <option value={""} disabled>Pilih kategori</option>
-                      <option value={"kesehatan"}>Kesehatan</option>
-                      <option value={"produktif"}>Produktif</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  <button 
+                    type="button"
+                    onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-sm font-bold text-gray-700 flex justify-between items-center hover:border-blue-500 transition-all cursor-pointer"
+                  >
+                     <span className="flex items-center gap-2">
+                        {categories ? (
+                          <>
+                            <div className={`w-2 h-2 rounded-full ${categories.toLowerCase() === "kesehatan" ? "bg-rose-500" : "bg-blue-500"}`}></div>
+                            {categories.charAt(0).toUpperCase() + categories.slice(1)}
+                          </>
+                        ) : (
+                          <span className="text-gray-400 font-normal">Pilih kategori</span>
+                        )}
+                     </span>
+                     <svg className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isCategoryOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                  </button>
+
+                  {isCategoryOpen && (
+                    <div className="absolute top-full left-0 w-full mt-2 bg-white border-2 border-slate-100 rounded-xl shadow-2xl shadow-slate-200/50 p-2 z-[60] animate-in fade-in zoom-in-95 duration-200">
+                       {[
+                         { id: "kesehatan", label: "Kesehatan", color: "bg-rose-500" },
+                         { id: "produktif", label: "Produktif", color: "bg-blue-500" }
+                       ].map((opt) => (
+                         <div 
+                           key={opt.id}
+                           onClick={() => { setCategories(opt.id); setIsCategoryOpen(false); }}
+                           className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold cursor-pointer transition-all ${categories.toLowerCase() === opt.id ? "bg-blue-50 text-blue-600" : "text-gray-600 hover:bg-slate-50"}`}
+                         >
+                            <div className={`w-1.5 h-1.5 rounded-full ${opt.color}`}></div>
+                            {opt.label}
+                         </div>
+                       ))}
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
 

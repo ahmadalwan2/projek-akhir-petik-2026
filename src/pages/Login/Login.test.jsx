@@ -2,10 +2,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import Login from './Login';
-import axiosIntance from '../../utils/axiosIntance';
+import axiosInstance from '../../utils/axiosInstance';
 
-// Mock axiosIntance
-vi.mock('../../utils/axiosIntance', () => ({
+// Mock axiosInstance
+vi.mock('../../utils/axiosInstance', () => ({
   default: {
     post: vi.fn(),
   },
@@ -18,7 +18,7 @@ describe('Login Component Error Handling', () => {
 
   it('should display "password salah" error below the password input', async () => {
     const errorMessage = 'Maaf, password salah';
-    axiosIntance.post.mockRejectedValueOnce({
+    axiosInstance.post.mockRejectedValueOnce({
       response: {
         data: { message: errorMessage },
         status: 401,

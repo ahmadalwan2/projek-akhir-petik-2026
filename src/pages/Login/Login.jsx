@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import axiosIntance from "../../utils/axiosIntance";
+import axiosInstance from "../../utils/axiosInstance";
 import { saveAuthUser } from "../../utils/authHelper";
 
 export default function Login() {
@@ -30,20 +30,26 @@ export default function Login() {
     setErrors([]);
     setGeneralError("");
     
+    // Client-side Validation
+    const validationErrors = [];
+    if (!email.trim()) validationErrors.push({ message: "Email jangan dikosongkan ya." });
+    if (!password) validationErrors.push({ message: "Passwordnya diisi dulu ya." });
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.includes('@')) {
-      setErrors([{ field: 'email', message: "Format email harus menyertakan '@'. Contoh: user@gmail.com" }]);
-      setLoading(false);
-      return;
+    if (email.trim() && !email.includes('@')) {
+      validationErrors.push({ message: "Format email harus menyertakan '@'. Contoh: user@gmail.com" });
+    } else if (email.trim() && !emailRegex.test(email)) {
+      validationErrors.push({ message: "Alamat email Anda tidak valid." });
     }
-    if (!emailRegex.test(email)) {
-      setErrors([{ field: 'email', message: "Alamat email Anda tidak valid." }]);
+
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
       setLoading(false);
       return;
     }
 
     try {
-      const result = await axiosIntance.post(`/auth/login`,
+      const result = await axiosInstance.post(`/auth/login`,
         {
           email,
           password,

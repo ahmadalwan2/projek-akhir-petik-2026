@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosIntance from "../../utils/axiosIntance";
+import axiosInstance from "../../utils/axiosInstance";
 
 export default function LupaPassword() {
   const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ export default function LupaPassword() {
 
     try {
 
-      await axiosIntance.post(`/auth/reset-password`, {
+      await axiosInstance.post(`/auth/reset-password`, {
         email,
         newPassword: password,
         password: password,

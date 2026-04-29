@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from '../../component/Sidebar/Sidebar.jsx';
 import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
 import Spinner from '../../component/Spinner/Spinner.jsx';
-import axiosIntance from "../../utils/axiosIntance.jsx";
+import axiosInstance from "../../utils/axiosInstance.jsx";
 import { getAuthUser } from "../../utils/authHelper";
 
 export default function Dashboard() {
@@ -49,7 +49,7 @@ export default function Dashboard() {
     const fetchDashboardData = async () => {
       setIsDataLoading(true);
       try {
-        const res = await axiosIntance.get("/dashboard");
+        const res = await axiosInstance.get("/dashboard");
         const userData = res.data.data;
         
         if (userData) {

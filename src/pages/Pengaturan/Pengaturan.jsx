@@ -3,7 +3,7 @@ import Sidebar from '../../component/Sidebar/Sidebar.jsx';
 import NexoraAlert from '../../component/NexoraAlert/NexoraAlert.jsx';
 import MobileHeader from "../../component/MobileHeader/MobileHeader.jsx";
 import Spinner from "../../component/Spinner/Spinner.jsx";
-import axiosIntance from "../../utils/axiosIntance.jsx";
+import axiosInstance from "../../utils/axiosInstance.jsx";
 import { saveAuthUser, getAuthUser } from "../../utils/authHelper";
 
 export default function Pengaturan() {
@@ -12,10 +12,8 @@ export default function Pengaturan() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isDataLoading, setIsDataLoading] = useState(true);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsDataLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
+  // Loading handled by fetchUserData finally block
+  useEffect(() => {}, []);
 
   const [activeTab, setActiveTab] = useState("profil");
   const [isSaving, setIsSaving] = useState(false);
@@ -43,7 +41,7 @@ export default function Pengaturan() {
     const fetchUserData = async () => {
       try {
         const localUser = JSON.parse(localStorage.getItem("nexora_user"));
-        const res = await axiosIntance.get("/user");
+        const res = await axiosInstance.get("/user");
         const allUsers = res.data.data || [];
         const currentUser = allUsers.find((u) => u.email === localUser?.email);
 
@@ -65,7 +63,7 @@ export default function Pengaturan() {
       }
     };
 
-    fetchUserData();
+    fetchUserData().finally(() => setIsDataLoading(false));
 
     const handleUpdate = () => {
       const updatedUser = getAuthUser();
@@ -103,7 +101,7 @@ export default function Pengaturan() {
   const saveProfileData = async () => {
     setIsSaving(true);
     try {
-      await axiosIntance.patch("/update/user", {
+      await axiosInstance.patch("/update/user", {
         username: profile.name,
         email: profile.email,
         bio: profile.bio,
@@ -111,6 +109,18 @@ export default function Pengaturan() {
       });
 
       saveAuthUser(profile);
+      
+      // Catat ke Log Notifikasi
+      const eventLogs = JSON.parse(localStorage.getItem("nexora_event_logs") || "[]");
+      eventLogs.push({
+        id: `log-prof-${Date.now()}`,
+        title: "Profil Diperbarui",
+        message: "Informasi profil kamu telah berhasil diperbarui.",
+        type: 'success',
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem("nexora_event_logs", JSON.stringify(eventLogs));
+
       showAlert("Berhasil", "Profil berhasil diperbarui!", "success");
     } catch (error) {
       showAlert("Waduh!", error.response?.data?.message || "Terjadi kesalahan", "error");
@@ -124,11 +134,23 @@ export default function Pengaturan() {
       return showAlert("Eits!", "Konfirmasi sandi baru tidak cocok", "warning");
     }
     try {
-      await axiosIntance.patch("/update/password", {
+      await axiosInstance.patch("/update/password", {
         passwordLama: password.old,
         passwordBaru: password.new,
         konfirmasi_password: password.confirm,
       });
+      
+      // Catat ke Log Notifikasi
+      const eventLogs = JSON.parse(localStorage.getItem("nexora_event_logs") || "[]");
+      eventLogs.push({
+        id: `log-pass-${Date.now()}`,
+        title: "Sandi Diperbarui",
+        message: "Kata sandi akun kamu telah berhasil diubah demi keamanan.",
+        type: 'success',
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem("nexora_event_logs", JSON.stringify(eventLogs));
+
       showAlert("Berhasil", "Kata sandi berhasil diubah", "success");
       setPassword({ old: "", new: "", confirm: "" });
     } catch (error) {

@@ -2,10 +2,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import Register from './Register';
-import axiosIntance from '../../utils/axiosIntance';
+import axiosInstance from '../../utils/axiosInstance';
 
-// Mock axiosIntance
-vi.mock('../../utils/axiosIntance', () => ({
+// Mock axiosInstance
+vi.mock('../../utils/axiosInstance', () => ({
   default: {
     post: vi.fn(),
   },
@@ -18,7 +18,7 @@ describe('Register Component Error Handling', () => {
 
   it('should display specific field error message from backend below the input', async () => {
     const backendErrors = [{ message: 'Email ini sudah terdaftar di sistem kami' }];
-    axiosIntance.post.mockRejectedValueOnce({
+    axiosInstance.post.mockRejectedValueOnce({
       response: { data: { errors: backendErrors }, status: 400 }
     });
 
@@ -36,7 +36,7 @@ describe('Register Component Error Handling', () => {
 
   it('should display general error message as an alert for non-field errors', async () => {
     const errorMessage = 'Koneksi database terputus';
-    axiosIntance.post.mockRejectedValueOnce({
+    axiosInstance.post.mockRejectedValueOnce({
       response: { data: { message: errorMessage }, status: 500 }
     });
 
@@ -62,6 +62,6 @@ describe('Register Component Error Handling', () => {
     });
     
     // Pastikan API TIDAK dipanggil jika data tidak valid
-    expect(axiosIntance.post).not.toHaveBeenCalled();
+    expect(axiosInstance.post).not.toHaveBeenCalled();
   });
 });

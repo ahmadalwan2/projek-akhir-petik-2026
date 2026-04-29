@@ -5,7 +5,7 @@ import NexoraAlert from '../../component/NexoraAlert/NexoraAlert.jsx';
 import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
 import Spinner from '../../component/Spinner/Spinner.jsx';
 import { FaTrash, FaEdit, FaCheckCircle, FaClock, FaRocket, FaTimes, FaHeartbeat, FaBriefcase, FaTasks } from "react-icons/fa";
-import axiosIntance from "../../utils/axiosIntance.jsx";
+import axiosInstance from "../../utils/axiosInstance.jsx";
 
 export default function Aktifitas() {
   const [alertConfig, setAlertConfig] = useState({ isOpen: false, title: "", message: "", type: "info" });
@@ -20,6 +20,7 @@ export default function Aktifitas() {
 
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isTimeOpen, setIsTimeOpen] = useState(false);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isDataLoading, setIsDataLoading] = useState(true);
@@ -41,7 +42,7 @@ export default function Aktifitas() {
   const getActivities = async () => {
     setIsDataLoading(true);
     try {
-      const result = await axiosIntance.get("/activities")
+      const result = await axiosInstance.get("/activities")
       const finalData = Array.isArray(result.data) ? result.data : result.data.data
       setActivities(finalData || [])
     } catch (error) {
@@ -87,7 +88,7 @@ export default function Aktifitas() {
   const updateStatusOnly = async (e) => {
     if (e) e.preventDefault();
     try {
-      await axiosIntance.patch(`/activities/update/${selectedId}`, { status });
+      await axiosInstance.patch(`/activities/update/${selectedId}`, { status });
       setStatusModalOpen(false);
       getActivities();
       showAlert("Berhasil", "Status telah diperbarui", "success");
@@ -99,12 +100,24 @@ export default function Aktifitas() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await axiosIntance.patch(`/activities/update/${selectedId}`, {
+      await axiosInstance.patch(`/activities/update/${selectedId}`, {
         title,
         description,
         categories,
         status
       });
+      
+      // Catat ke Log Notifikasi
+      const eventLogs = JSON.parse(localStorage.getItem("nexora_event_logs") || "[]");
+      eventLogs.push({
+        id: `log-edit-${Date.now()}`,
+        title: "Perubahan Aktifitas",
+        message: `Kamu telah memperbarui data pada aktifitas '${title}'.`,
+        type: 'info',
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem("nexora_event_logs", JSON.stringify(eventLogs));
+
       setModalOpen(false);
       getActivities();
       showAlert("Berhasil", "Data berhasil diubah", "success");
@@ -121,7 +134,23 @@ export default function Aktifitas() {
 
   const handleDeleteExecute = async () => {
     try {
-      await axiosIntance.delete(`/activities/delete/${idToDelete}`);
+      // Cari judul sebelum dihapus untuk log
+      const actToDelete = activities.find(a => a.id === idToDelete);
+      const title = actToDelete ? actToDelete.title : "Aktifitas";
+
+      await axiosInstance.delete(`/activities/delete/${idToDelete}`);
+      
+      // Catat ke Log Notifikasi
+      const eventLogs = JSON.parse(localStorage.getItem("nexora_event_logs") || "[]");
+      eventLogs.push({
+        id: `log-del-${Date.now()}`,
+        title: "Aktifitas Dihapus",
+        message: `Aktifitas '${title}' telah dihapus secara permanen.`,
+        type: 'warning',
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem("nexora_event_logs", JSON.stringify(eventLogs));
+
       setDeleteModalOpen(false);
       getActivities();
       showAlert("Berhasil", "Aktifitas telah dihapus", "success");
@@ -380,12 +409,37 @@ export default function Aktifitas() {
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Nama Aktifitas</label>
                 <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-5 py-3 bg-slate-50 border-2 border-slate-50 rounded-2xl text-sm font-bold focus:bg-white focus:border-blue-500 outline-none transition-all" />
               </div>
-              <div>
+              <div className="relative">
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Kategori</label>
-                <select value={categories} onChange={(e) => setCategories(e.target.value)} className="w-full px-5 py-3 bg-slate-50 border-2 border-slate-50 rounded-2xl text-sm font-bold focus:bg-white focus:border-blue-500 outline-none transition-all">
-                  <option value="kesehatan">Kesehatan</option>
-                  <option value="produktif">Produktif</option>
-                </select>
+                <button 
+                  type="button"
+                  onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                  className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-50 rounded-2xl text-sm font-bold text-slate-700 flex justify-between items-center hover:border-blue-200 transition-all cursor-pointer"
+                >
+                   <span className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${categories?.toLowerCase() === "kesehatan" ? "bg-rose-500" : "bg-blue-500"}`}></div>
+                      {categories ? (categories.charAt(0).toUpperCase() + categories.slice(1)) : "Pilih Kategori"}
+                   </span>
+                   <svg className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isCategoryOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+
+                {isCategoryOpen && (
+                  <div className="absolute top-full left-0 w-full mt-2 bg-white border-2 border-slate-100 rounded-2xl shadow-2xl shadow-slate-200/50 p-2 z-[60] animate-in fade-in zoom-in-95 duration-200">
+                     {[
+                       { id: "kesehatan", label: "Kesehatan", color: "bg-rose-500" },
+                       { id: "produktif", label: "Produktif", color: "bg-blue-500" }
+                     ].map((opt) => (
+                       <div 
+                         key={opt.id}
+                         onClick={() => { setCategories(opt.id); setIsCategoryOpen(false); }}
+                         className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer transition-all ${categories?.toLowerCase() === opt.id ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"}`}
+                       >
+                          <div className={`w-1.5 h-1.5 rounded-full ${opt.color}`}></div>
+                          {opt.label}
+                       </div>
+                     ))}
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Deskripsi</label>

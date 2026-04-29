@@ -40,3 +40,12 @@ export const saveAuthUser = (data) => {
     window.dispatchEvent(new Event("storage"));
     window.dispatchEvent(new Event("userUpdate"));
 };
+
+export const clearAuthData = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("nexora_user");
+    localStorage.removeItem("nexora_meta");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("nexora_event_logs"); // Opsional, tapi lebih bersih
+    window.dispatchEvent(new Event("userUpdate"));
+};

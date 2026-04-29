@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosIntance from "../../utils/axiosIntance";
+import axiosInstance from "../../utils/axiosInstance";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -39,16 +39,34 @@ export default function Register() {
     setLoading(true)
     setErrors([])
 
-    // Client-side Validation: Email
+    // Client-side Validation
+    const validationErrors = [];
+    
+    if (!username.trim()) validationErrors.push({ message: "Username tidak boleh kosong ya." });
+    if (!email.trim()) validationErrors.push({ message: "Email tidak boleh kosong ya." });
+    if (!password) validationErrors.push({ message: "Password tidak boleh kosong ya." });
+    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setErrors([{ message: "Gunakan format email yang valid ya." }]);
+    if (email.trim() && !emailRegex.test(email)) {
+      validationErrors.push({ message: "Gunakan format email yang valid ya." });
+    }
+
+    if (password && password.length < 6) {
+      validationErrors.push({ message: "Password minimal 6 karakter ya agar aman." });
+    }
+
+    if (password !== confirmPassword) {
+      validationErrors.push({ message: "Konfirmasi password tidak cocok nih." });
+    }
+
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
       setLoading(false);
       return;
     }
 
     try {
-      await axiosIntance.post("/auth/register", {
+      await axiosInstance.post("/auth/register", {
         username,
         email,
         password,

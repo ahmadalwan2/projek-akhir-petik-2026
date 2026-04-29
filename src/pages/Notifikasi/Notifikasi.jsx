@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from '../../component/Sidebar/Sidebar.jsx';
 import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
 import Spinner from '../../component/Spinner/Spinner.jsx';
-import axiosIntance from "../../utils/axiosIntance.jsx";
+import axiosInstance from "../../utils/axiosInstance.jsx";
 
 export default function Notifikasi() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -24,11 +24,10 @@ export default function Notifikasi() {
 
     const fetchData = async () => {
     setIsDataLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
     try {
       const [actRes, finRes] = await Promise.all([
-        axiosIntance.get("/activities").catch(() => ({ data: [] })),
-        axiosIntance.get("/finance").catch(() => ({ data: [] }))
+        axiosInstance.get("/activities").catch(() => ({ data: [] })),
+        axiosInstance.get("/finance").catch(() => ({ data: [] }))
       ]);
 
       const activities = Array.isArray(actRes.data) ? actRes.data : (actRes.data.data || []);
@@ -75,31 +74,71 @@ export default function Notifikasi() {
 
     if (activities && activities.length > 0) {
       activities.forEach((act) => {
-        const actDate = new Date(act.createdAt);
+        const createDate = new Date(act.createdAt);
+        const updateDate = new Date(act.updatedAt || act.updated_at || act.createdAt);
         
+        // 1. Notifikasi: Berhasil Dibuat
         notifs.push({
           id: `act-cre-${act.id}`,
-          title: "Aktifitas Berhasil Dibuat",
-          message: `Aktifitas '${act.title}' telah berhasil ditambahkan.`,
-          time: timeAgo(actDate),
-          createdAt: actDate.getTime(),
+          title: "Aktifitas Dibuat",
+          message: `Aktifitas '${act.title}' telah berhasil ditambahkan ke rencana harimu.`,
+          time: timeAgo(createDate),
+          createdAt: createDate.getTime(),
           type: 'info',
         });
 
-        const diffInHours = (now - actDate) / (1000 * 60 * 60);
-        if (act.status !== 3 && diffInHours >= 24) {
-          const warningDate = new Date(actDate.getTime() + 24 * 60 * 60 * 1000);
+        // 2. Notifikasi: Selesai (Jika status === 3)
+        if (Number(act.status) === 3) {
+          notifs.push({
+            id: `act-fin-${act.id}`,
+            title: "Aktifitas Selesai",
+            message: `Hore! Kamu telah menyelesaikan aktifitas '${act.title}'. Terus pertahankan ritme ini!`,
+            time: timeAgo(updateDate),
+            createdAt: updateDate.getTime() + 1, // Agar urutan tampil di atas 'Created'
+            type: 'success',
+          });
+        } 
+        // 3. Notifikasi: Dalam Proses (Jika status === 2)
+        else if (Number(act.status) === 2) {
+          notifs.push({
+            id: `act-prog-${act.id}`,
+            title: "Aktifitas Diproses",
+            message: `Status aktifitas '${act.title}' sekarang sedang dalam pengerjaan.`,
+            time: timeAgo(updateDate),
+            createdAt: updateDate.getTime() + 1,
+            type: 'info',
+          });
+        }
+
+        // 4. Pengingat Terlambat
+        const diffInHours = (now - createDate) / (1000 * 60 * 60);
+        if (Number(act.status) !== 3 && diffInHours >= 24) {
+          const warningDate = new Date(createDate.getTime() + 24 * 60 * 60 * 1000);
           notifs.push({
             id: `act-late-${act.id}`,
-            title: "Aktifitas Belum Terlaksana",
-            message: `Aktifitas '${act.title}' sudah melewati 24 jam dan belum selesai.`,
+            title: "Pengingat Penting",
+            message: `Aktifitas '${act.title}' sudah lebih dari 24 jam belum selesai. Ayo segera tuntaskan!`,
             time: timeAgo(warningDate), 
-            createdAt: warningDate.getTime(),
+            createdAt: warningDate.getTime() + 2,
             type: 'warning',
           });
         }
       });
     }
+
+    // 3. Gabungkan dengan Data Event Log dari LocalStorage (Edit, Delete, Password, Profil)
+    const eventLogs = JSON.parse(localStorage.getItem("nexora_event_logs") || "[]");
+    eventLogs.forEach((log) => {
+      const logDate = new Date(log.createdAt);
+      notifs.push({
+        id: log.id,
+        title: log.title,
+        message: log.message,
+        time: timeAgo(logDate),
+        createdAt: logDate.getTime(),
+        type: log.type || 'info',
+      });
+    });
 
     const clearedAt = parseInt(localStorage.getItem("nexora_notifications_clear_at") || "0");
     const filteredNotifs = notifs.filter(n => n.createdAt > clearedAt);
@@ -117,6 +156,7 @@ export default function Notifikasi() {
   const clearAllNotifications = () => {
     const now = new Date().getTime();
     localStorage.setItem("nexora_notifications_clear_at", now);
+    localStorage.setItem("nexora_event_logs", "[]"); // Bersihkan log event juga
     setNotifications([]);
   };
 
