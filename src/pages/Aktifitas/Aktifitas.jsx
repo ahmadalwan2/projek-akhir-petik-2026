@@ -10,6 +10,17 @@ import axiosIntance from "../../utils/axiosIntance.jsx";
 export default function Aktifitas() {
   const [alertConfig, setAlertConfig] = useState({ isOpen: false, title: "", message: "", type: "info" });
   const showAlert = (title, message, type = "info") => setAlertConfig({ isOpen: true, title, message, type });
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [idToDelete, setIdToDelete] = useState(null);
+  
+  // States for Search & Filter
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [timeFilter, setTimeFilter] = useState("all");
+
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const [isTimeOpen, setIsTimeOpen] = useState(false);
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isDataLoading, setIsDataLoading] = useState(true);
   
@@ -22,8 +33,6 @@ export default function Aktifitas() {
   const [status, setStatus] = useState(1);
   const [categories, setCategories] = useState("");
   const [statusModalOpen, setStatusModalOpen] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [idToDelete, setIdToDelete] = useState(null);
   
   useEffect(()=>{
     getActivities().finally(() => setIsDataLoading(false))
@@ -147,6 +156,96 @@ export default function Aktifitas() {
           </button>
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-8">
+          <div className="md:col-span-6 relative group">
+             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg className="w-4 h-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+             </div>
+             <input 
+               type="text" 
+               placeholder="Cari aktifitas..."
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               className="w-full pl-11 pr-11 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-sm font-bold focus:border-blue-500 focus:shadow-xl focus:shadow-blue-500/5 outline-none transition-all placeholder:text-slate-400"
+             />
+             {searchTerm && (
+               <button 
+                 onClick={() => setSearchTerm("")}
+                 className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
+               >
+                  <FaTimes size={14} />
+               </button>
+             )}
+          </div>
+
+          {/* Custom Status Dropdown */}
+          <div className="md:col-span-3 relative">
+             <button 
+               onClick={() => { setIsStatusOpen(!isStatusOpen); setIsTimeOpen(false); }}
+               className="w-full px-5 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-sm font-bold text-slate-700 flex justify-between items-center hover:border-blue-200 transition-all cursor-pointer"
+             >
+                <span className="flex items-center gap-2">
+                   <div className={`w-2 h-2 rounded-full ${statusFilter === "all" ? "bg-slate-300" : statusFilter === "1" ? "bg-amber-500" : statusFilter === "2" ? "bg-blue-500" : "bg-emerald-500"}`}></div>
+                   {statusFilter === "all" ? "Semua Status" : statusFilter === "1" ? "Pending" : statusFilter === "2" ? "Progress" : "Selesai"}
+                </span>
+                <svg className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isStatusOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+             </button>
+             
+             {isStatusOpen && (
+               <div className="absolute top-full left-0 w-full mt-2 bg-white border-2 border-slate-100 rounded-2xl shadow-2xl shadow-slate-200/50 p-2 z-[60] animate-in fade-in zoom-in-95 duration-200">
+                  {[
+                    { id: "all", label: "Semua Status", color: "bg-slate-300" },
+                    { id: "1", label: "Pending", color: "bg-amber-500" },
+                    { id: "2", label: "Progress", color: "bg-blue-500" },
+                    { id: "3", label: "Selesai", color: "bg-emerald-500" }
+                  ].map((opt) => (
+                    <div 
+                      key={opt.id}
+                      onClick={() => { setStatusFilter(opt.id); setIsStatusOpen(false); }}
+                      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer transition-all ${statusFilter === opt.id ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"}`}
+                    >
+                       <div className={`w-1.5 h-1.5 rounded-full ${opt.color}`}></div>
+                       {opt.label}
+                    </div>
+                  ))}
+               </div>
+             )}
+          </div>
+
+          {/* Custom Time Dropdown */}
+          <div className="md:col-span-3 relative">
+             <button 
+               onClick={() => { setIsTimeOpen(!isTimeOpen); setIsStatusOpen(false); }}
+               className="w-full px-5 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-sm font-bold text-slate-700 flex justify-between items-center hover:border-blue-200 transition-all cursor-pointer"
+             >
+                <span className="flex items-center gap-2">
+                   <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                   {timeFilter === "all" ? "Semua Waktu" : timeFilter === "today" ? "Hari Ini" : timeFilter === "yesterday" ? "Kemarin" : "Minggu Lalu"}
+                </span>
+                <svg className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isTimeOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+             </button>
+
+             {isTimeOpen && (
+               <div className="absolute top-full left-0 w-full mt-2 bg-white border-2 border-slate-100 rounded-2xl shadow-2xl shadow-slate-200/50 p-2 z-[60] animate-in fade-in zoom-in-95 duration-200">
+                  {[
+                    { id: "all", label: "Semua Waktu" },
+                    { id: "today", label: "Hari Ini" },
+                    { id: "yesterday", label: "Kemarin" },
+                    { id: "last-week", label: "Minggu Lalu" }
+                  ].map((opt) => (
+                    <div 
+                      key={opt.id}
+                      onClick={() => { setTimeFilter(opt.id); setIsTimeOpen(false); }}
+                      className={`px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer transition-all ${timeFilter === opt.id ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"}`}
+                    >
+                       {opt.label}
+                    </div>
+                  ))}
+               </div>
+             )}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
            {activities?.length === 0 ? (
              <div className="col-span-full py-20 flex flex-col items-center justify-center bg-white rounded-3xl border-2 border-dashed border-slate-200">
@@ -162,7 +261,31 @@ export default function Aktifitas() {
                 </button>
              </div>
            ) : (
-             activities.map((act) => {
+             activities
+              .filter(act => {
+                // Search Filter
+                const matchesSearch = act.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                     act.description.toLowerCase().includes(searchTerm.toLowerCase());
+                
+                // Status Filter
+                const matchesStatus = statusFilter === "all" || String(act.status) === statusFilter;
+
+                // Time Filter
+                let matchesTime = true;
+                if (timeFilter !== "all") {
+                  const date = new Date(act.createdAt || act.created_at || act.date || new Date());
+                  const now = new Date();
+                  const diffTime = Math.abs(now - date);
+                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                  if (timeFilter === "today") matchesTime = diffDays <= 1;
+                  else if (timeFilter === "yesterday") matchesTime = diffDays === 2;
+                  else if (timeFilter === "last-week") matchesTime = diffDays <= 7;
+                }
+
+                return matchesSearch && matchesStatus && matchesTime;
+              })
+              .map((act) => {
                 const statusInfo = getStatusDetail(act.status);
                 const isSelesai = Number(act.status) === 3;
                 const cat = (act.categories || act.category || "General").toLowerCase();

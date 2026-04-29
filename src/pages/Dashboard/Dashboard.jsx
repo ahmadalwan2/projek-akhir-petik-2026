@@ -49,7 +49,6 @@ export default function Dashboard() {
     const fetchDashboardData = async () => {
       setIsDataLoading(true);
       try {
-        await new Promise(resolve => setTimeout(resolve, 300));
         const res = await axiosIntance.get("/dashboard");
         const userData = res.data.data;
         
@@ -65,29 +64,34 @@ export default function Dashboard() {
           const actString = `${completed}/${totalTugas}`;
           setCompletedTasks(completed);
           setTotalActivities(actString);
-          setProductivity(totalTugas > 0 ? `${Math.round((completed / totalTugas) * 100)}%` : "0%");
+          
+          const prodPercentage = totalTugas > 0 ? Math.round((completed / totalTugas) * 100) : 0;
+          setProductivity(`${prodPercentage}%`);
           
           const activities = ringkasanAktifitas.daftar_activities || [];
           setActivitiesData(activities);
 
+          // Logika Grafik Dinamis: Jika total tugas 0, maka grafik flat di 0.
           if (mode === "harian") {
-            const mockDaily = [
+            const chartValue = totalTugas > 0 ? prodPercentage : 0;
+            const dailyData = [
               { name: "00:00", value: 0 },
-              { name: "06:00", value: 20 },
-              { name: "12:00", value: 50 },
-              { name: "18:00", value: 80 },
-              { name: "23:59", value: 100 },
+              { name: "06:00", value: chartValue * 0.2 },
+              { name: "12:00", value: chartValue * 0.5 },
+              { name: "18:00", value: chartValue * 0.8 },
+              { name: "23:59", value: chartValue },
             ];
-            setChartData(mockDaily);
+            setChartData(dailyData);
           } else {
+            const chartValue = totalTugas > 0 ? prodPercentage : 0;
             const weeklyData = [
-              { name: "Sen", value: 40 },
-              { name: "Sel", value: 30 },
-              { name: "Rab", value: 60 },
-              { name: "Kam", value: 80 },
-              { name: "Jum", value: 50 },
-              { name: "Sab", value: 90 },
-              { name: "Min", value: 70 },
+              { name: "Sen", value: chartValue * 0.6 },
+              { name: "Sel", value: chartValue * 0.4 },
+              { name: "Rab", value: chartValue * 0.8 },
+              { name: "Kam", value: chartValue },
+              { name: "Jum", value: chartValue * 0.7 },
+              { name: "Sab", value: chartValue * 0.9 },
+              { name: "Min", value: chartValue * 0.8 },
             ];
             setChartData(weeklyData);
           }

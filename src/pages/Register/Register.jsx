@@ -23,17 +23,30 @@ export default function Register() {
   const [errors, setErrors] = useState([])
 
   const getFieldError = (field) => {
-    if (field === 'username') return errors.find(e => e.message.toLowerCase().includes('username'))?.message ? "Username minimal 3 karakter untuk identitas Anda." : null;
-    if (field === 'email') return errors.find(e => e.message.toLowerCase().includes('email'))?.message ? "Gunakan format email yang valid ya." : null;
-    if (field === 'password') return errors.find(e => e.message.toLowerCase().includes('password') && !e.message.toLowerCase().includes('konfirmasi') && !e.message.toLowerCase().includes('cocok'))?.message ? "Password minimal 6 karakter demi keamanan Anda." : null;
-    if (field === 'confirmPassword') return errors.find(e => e.message.toLowerCase().includes('konfirmasi') || e.message.toLowerCase().includes('cocok'))?.message ? "Ups, konfirmasi password tidak sesuai." : null;
-    return null;
+    const error = errors.find(e => {
+      const msg = e.message.toLowerCase();
+      if (field === 'confirmPassword') return msg.includes('konfirmasi') || msg.includes('cocok');
+      if (field === 'email') return msg.includes('email') || msg.includes('format');
+      if (field === 'username') return msg.includes('username');
+      if (field === 'password') return (msg.includes('password') || msg.includes('kata sandi')) && !msg.includes('konfirmasi') && !msg.includes('cocok');
+      return false;
+    });
+    return error ? error.message : null;
   }
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true)
     setErrors([])
+
+    // Client-side Validation: Email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrors([{ message: "Gunakan format email yang valid ya." }]);
+      setLoading(false);
+      return;
+    }
+
     try {
       await axiosIntance.post("/auth/register", {
         username,
@@ -46,7 +59,8 @@ export default function Register() {
       if (error?.response?.data?.errors) {
         setErrors(error.response.data.errors)
       } else {
-        setErrors([{ message: error?.response?.data?.message || "Terjadi kesalahan" }])
+        const msg = error?.response?.data?.message || "Terjadi kesalahan pada sistem";
+        setErrors([{ message: msg }])
       }
     } finally {
       setLoading(false)
@@ -65,7 +79,17 @@ export default function Register() {
             Mulai perjalananmu <br /> bersama kami
           </h1>
 
-          <form className="text-left space-y-4" onSubmit={handleRegister} autoComplete="off">
+          {/* Menampilkan pesan error umum jika ada (yang tidak spesifik ke field) */}
+          {errors.length > 0 && !['username', 'email', 'password', 'konfirmasi'].some(field => errors[0].message.toLowerCase().includes(field)) && (
+             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg text-xs font-medium flex items-center gap-2 animate-in fade-in slide-in-from-top-4">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+               </svg>
+               {errors[0].message}
+             </div>
+          )}
+
+          <form className="text-left space-y-4" onSubmit={handleRegister} autoComplete="off" noValidate>
             <div>
               <label className="text-sm text-gray-600">Username</label>
               <input

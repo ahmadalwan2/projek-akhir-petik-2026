@@ -15,15 +15,13 @@ export default function Login() {
   const navigate = useNavigate();
 
   const getFieldError = (field) => {
-    if (field === 'email') {
-      const error = errors.find(e => e.field === 'email' || e.message.toLowerCase().includes('email') || e.message.toLowerCase().includes('pengguna'));
-      return error ? error.message : null;
-    }
-    if (field === 'password') {
-      const error = errors.find(e => e.field === 'password' || e.message.toLowerCase().includes('password') || e.message.toLowerCase().includes('sandi'));
-      return error ? error.message : null;
-    }
-    return null;
+    const error = errors.find(e => {
+      const msg = e.message.toLowerCase();
+      if (field === 'email') return msg.includes('email') || msg.includes('pengguna') || msg.includes('ditemukan') || msg.includes('terdaftar');
+      if (field === 'password') return msg.includes('password') || msg.includes('sandi') || msg.includes('salah');
+      return false;
+    });
+    return error ? error.message : null;
   }
 
   const handleSubmit = async (e) => {
@@ -66,12 +64,16 @@ export default function Login() {
       
     } catch (error) {
       const message = error?.response?.data?.message || "";
-      if (message.toLowerCase().includes("tidak ditemukan") || message.toLowerCase().includes("tidak terdaftar") || error?.response?.status === 404) {
-        setGeneralError("Akun belum terdaftar di Nexora. Silahkan register terlebih dahulu.");
-      } else if (error?.response?.data?.errors) {
-        setErrors(error.response.data.errors)
+      const msgLower = message.toLowerCase();
+
+      if (error?.response?.data?.errors) {
+        setErrors(error.response.data.errors);
+      } else if (msgLower.includes("email") || msgLower.includes("tidak ditemukan") || msgLower.includes("tidak terdaftar") || error?.response?.status === 404) {
+        setErrors([{ message: message || "Akun belum terdaftar di Nexora." }]);
+      } else if (msgLower.includes("password") || msgLower.includes("sandi") || msgLower.includes("salah")) {
+        setErrors([{ message: message || "Password yang Anda masukkan salah." }]);
       } else {
-        setGeneralError(message || "Terjadi kesalahan saat login")
+        setGeneralError(message || "Terjadi kesalahan saat login");
       }
     } finally {
         setLoading(false)
