@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 import { FaMinimize } from "react-icons/fa6";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getAuthUser } from "../../utils/authHelper";
+import { getAuthUser, clearAuthData } from "../../utils/authHelper";
 
 export default function Sidebar({ open, setOpen }) {
   const navigate = useNavigate();
@@ -139,9 +139,7 @@ export default function Sidebar({ open, setOpen }) {
 
           <div
             onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("nexora_user");
-              localStorage.removeItem("nexora_meta");
+              clearAuthData();
               navigate("/");
             }}
             className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 group

@@ -11,10 +11,19 @@ import {
   FaMinus
 } from "react-icons/fa6";
 
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 export default function LandingPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true,
+      easing: "ease-in-out"
+    });
+
     const token = localStorage.getItem("token");
     if (token) {
       navigate("/dashboard");
@@ -77,16 +86,16 @@ export default function LandingPage() {
 
       <section className="max-w-6xl mx-auto px-6 pt-10 pb-20 text-center" id="hero">
 
-        <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+        <h1 className="text-4xl md:text-5xl font-bold leading-tight" data-aos="fade-up">
           Kelola hidupmu dengan lebih teratur
         </h1>
 
-        <p className="mt-4 text-gray-500 max-w-xl mx-auto">
+        <p className="mt-4 text-gray-500 max-w-xl mx-auto" data-aos="fade-up" data-aos-delay="200">
           Nexora membantu kamu mengatur keuangan, aktivitas harian,
           dan kebiasaan dalam satu tempat yang sederhana.
         </p>
 
-        <div className="mt-6 flex justify-center gap-3">
+        <div className="mt-6 flex justify-center gap-3" data-aos="zoom-in" data-aos-delay="400">
           <button onClick={() => navigate("/login")} className="bg-blue-600 text-white px-6 py-3 rounded-xl shadow cursor-pointer">
             Mulai sekarang
           </button>
@@ -98,11 +107,11 @@ export default function LandingPage() {
   
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
 
-          <div className="flex items-center justify-center h-[320px] md:h-[360px]">
+          <div className="flex items-center justify-center h-[320px] md:h-[360px]" data-aos="fade-right">
             <img src="/phone.png" alt="app preview" className="h-full object-contain" />
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6" data-aos="fade-up" data-aos-delay="600">
             <div className="bg-blue-500 text-white rounded-2xl p-6 text-left shadow">
               <p className="text-sm opacity-80">
                 Pengguna merasa lebih teratur dalam aktivitas harian
@@ -118,7 +127,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-center h-[300px] md:h-[360px]">
+          <div className="flex items-center justify-center h-[300px] md:h-[360px]" data-aos="fade-left">
             <img src="/phone-hand.png" alt="app in hand" className="h-full object-contain" />
           </div>
 
@@ -149,7 +158,7 @@ export default function LandingPage() {
             { icon: <FaCircleCheck />, title: "Bangun Kebiasaan", desc: "Lacak kebiasaan positif harian." },
             { icon: <FaLayerGroup />, title: "All-in-One Dashboard", desc: "Semua data dalam satu tampilan." }
           ].map((item, i) => (
-            <div key={i} className="bg-white p-6 rounded-2xl shadow hover:border-2 hover:border-blue-500 hover:shadow-md cursor-pointer">
+            <div key={i} data-aos="fade-up" data-aos-delay={i * 100} className="bg-white p-6 rounded-2xl shadow hover:border-2 hover:border-blue-500 hover:shadow-md cursor-pointer transition-all">
               <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 mb-4">
                 {item.icon}
               </div>
@@ -206,6 +215,8 @@ export default function LandingPage() {
             return (
               <div
                 key={index}
+                data-aos="fade-up"
+                data-aos-delay={index * 50}
                 onClick={() => setOpenIndex(isOpen ? null : index)}
                 className={`p-5 rounded-xl cursor-pointer transition-all duration-300
                   ${isOpen ? "bg-gray-100" : "bg-white hover:bg-gray-50"}
