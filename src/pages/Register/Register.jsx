@@ -89,7 +89,16 @@ export default function Register() {
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <div className="flex flex-1 items-center justify-center px-6">
         <div className="w-full max-w-md text-center">
-          <div className="flex justify-center items-center gap-2 mb-6">
+          {/* Tombol Kembali ke Beranda */}
+          <button 
+            onClick={() => navigate("/")}
+            className="absolute top-8 left-6 flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-blue-600 transition-all cursor-pointer group"
+          >
+            <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            Beranda
+          </button>
+
+          <div className="flex justify-center items-center gap-2 mb-6 cursor-pointer transition-transform hover:scale-105" onClick={() => navigate("/")}>
             <img src="/logo-nexora.png" alt="logo" className="h-6" />
           </div>
 
