@@ -30,7 +30,15 @@ export default function LandingPage() {
     }
   }, [navigate]);
 
-  const [openIndex, setOpenIndex] = useState(null);
+  const [openIndices, setOpenIndices] = useState([]);
+
+  const toggleFaq = (index) => {
+    setOpenIndices(prev => 
+      prev.includes(index) 
+        ? prev.filter(i => i !== index) 
+        : [...prev, index]
+    );
+  };
 
   const faqs = [
     {
@@ -208,14 +216,14 @@ export default function LandingPage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-4 items-start">
           {faqs.map((faq, index) => {
-            const isOpen = openIndex === index;
+            const isOpen = openIndices.includes(index);
 
             return (
               <div
                 key={index}
-                onClick={() => setOpenIndex(isOpen ? null : index)}
+                onClick={() => toggleFaq(index)}
                 className={`p-5 rounded-xl cursor-pointer transition-all duration-300
                   ${isOpen ? "bg-gray-100" : "bg-white hover:bg-gray-50"}
                 `}
