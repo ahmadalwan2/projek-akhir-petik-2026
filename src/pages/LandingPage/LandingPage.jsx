@@ -224,21 +224,27 @@ export default function LandingPage() {
               <div
                 key={index}
                 onClick={() => toggleFaq(index)}
-                className={`p-5 rounded-xl cursor-pointer transition-all duration-300
-                  ${isOpen ? "bg-gray-100" : "bg-white hover:bg-gray-50"}
+                className={`p-5 rounded-xl cursor-pointer transition-all duration-300 border
+                  ${isOpen 
+                    ? "bg-gray-50 border-blue-100 shadow-md" 
+                    : "bg-white border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200"}
                 `}
               >
                 <div className="flex justify-between items-center">
-                  <h3 className="font-medium">{faq.question}</h3>
-                  <span className="text-blue-600">
+                  <h3 className={`font-medium transition-colors ${isOpen ? "text-blue-600" : "text-gray-800"}`}>
+                    {faq.question}
+                  </h3>
+                  <span className={`transition-transform duration-300 ${isOpen ? "text-blue-600 rotate-180" : "text-gray-400"}`}>
                     {isOpen ? <FaMinus /> : <FaPlus />}
                   </span>
                 </div>
 
                 {isOpen && (
-                  <p className="text-sm text-gray-500 mt-3">
-                    {faq.answer}
-                  </p>
+                  <div className="overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
+                    <p className="text-sm text-gray-500 mt-3 leading-relaxed">
+                      {faq.answer}
+                    </p>
+                  </div>
                 )}
               </div>
             );
