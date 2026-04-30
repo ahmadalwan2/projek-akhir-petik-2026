@@ -224,24 +224,24 @@ export default function LandingPage() {
               <div
                 key={index}
                 onClick={() => toggleFaq(index)}
-                className={`p-5 rounded-xl cursor-pointer transition-all duration-300 border
+                className={`p-6 rounded-2xl cursor-pointer transition-all duration-500 border
                   ${isOpen 
-                    ? "bg-gray-50 border-blue-100 shadow-md" 
-                    : "bg-white border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200"}
+                    ? "bg-white border-blue-100 shadow-[0_20px_50px_rgba(8,112,184,0.07)]" 
+                    : "bg-white border-gray-50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] hover:border-blue-100"}
                 `}
               >
                 <div className="flex justify-between items-center">
-                  <h3 className={`font-medium transition-colors ${isOpen ? "text-blue-600" : "text-gray-800"}`}>
+                  <h3 className={`font-semibold text-lg transition-colors duration-300 ${isOpen ? "text-blue-600" : "text-gray-800"}`}>
                     {faq.question}
                   </h3>
-                  <span className={`transition-transform duration-300 ${isOpen ? "text-blue-600 rotate-180" : "text-gray-400"}`}>
-                    {isOpen ? <FaMinus /> : <FaPlus />}
-                  </span>
+                  <div className={`w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 ${isOpen ? "bg-blue-50 text-blue-600 rotate-180" : "bg-gray-50 text-gray-400"}`}>
+                    {isOpen ? <FaMinus size={12} /> : <FaPlus size={12} />}
+                  </div>
                 </div>
 
                 {isOpen && (
-                  <div className="overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
-                    <p className="text-sm text-gray-500 mt-3 leading-relaxed">
+                  <div className="overflow-hidden animate-in fade-in slide-in-from-top-2 duration-500">
+                    <p className="text-gray-500 mt-4 leading-relaxed text-sm md:text-base">
                       {faq.answer}
                     </p>
                   </div>
