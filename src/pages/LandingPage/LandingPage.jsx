@@ -231,7 +231,7 @@ export default function LandingPage() {
                 `}
               >
                 <div className="flex justify-between items-center">
-                  <h3 className={`font-semibold text-lg transition-colors duration-300 ${isOpen ? "text-blue-600" : "text-gray-800"}`}>
+                  <h3 className={`font-medium text-lg transition-colors duration-300 ${isOpen ? "text-blue-600" : "text-gray-800"}`}>
                     {faq.question}
                   </h3>
                   <div className={`w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 ${isOpen ? "bg-blue-50 text-blue-600 rotate-180" : "bg-gray-50 text-gray-400"}`}>
