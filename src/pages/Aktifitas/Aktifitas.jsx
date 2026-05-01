@@ -175,13 +175,10 @@ export default function Aktifitas() {
           </div>
           <button 
             onClick={() => navigate("/aktifitas/tambah")}
-            className="group relative bg-[#0052FF] hover:bg-blue-700 text-white px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-blue-200 cursor-pointer flex items-center gap-2 overflow-hidden"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer flex items-center gap-2"
           >
-             <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-             <span className="relative flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"></path></svg>
-                Tambah Aktifitas
-             </span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"></path></svg>
+            Tambah Aktifitas
           </button>
         </div>
 
@@ -284,7 +281,7 @@ export default function Aktifitas() {
                 <p className="text-sm font-bold text-slate-400">Belum ada aktifitas untuk ditampilkan.</p>
                 <button 
                   onClick={() => navigate("/aktifitas/tambah")} 
-                  className="mt-6 text-[10px] font-black text-white bg-[#0052FF] hover:bg-blue-700 px-6 py-2.5 rounded-xl transition-all shadow-[0_8px_20px_-6px_rgba(0,82,255,0.4)] hover:shadow-[0_12px_25px_-4px_rgba(0,82,255,0.5)] hover:-translate-y-0.5 active:translate-y-0 uppercase tracking-widest cursor-pointer"
+                  className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer uppercase tracking-widest"
                 >
                   Buat Sekarang
                 </button>
@@ -445,7 +442,7 @@ export default function Aktifitas() {
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Deskripsi</label>
                 <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full px-5 py-3 bg-slate-50 border-2 border-slate-50 rounded-2xl text-sm font-bold focus:bg-white focus:border-blue-500 outline-none resize-none transition-all" rows="4"></textarea>
               </div>
-              <button type="submit" className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all cursor-pointer">Simpan Perubahan</button>
+              <button type="submit" className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium transition-all cursor-pointer text-sm">Simpan Perubahan</button>
             </form>
           </div>
         </div>
@@ -475,7 +472,7 @@ export default function Aktifitas() {
             </div>
             <div className="grid grid-cols-2 gap-3 mt-8">
                 <button onClick={() => setStatusModalOpen(false)} className="py-3 px-4 rounded-2xl bg-slate-100 text-slate-500 font-bold text-sm hover:bg-slate-200 transition-all cursor-pointer">Batal</button>
-                <button onClick={updateStatusOnly} className="py-3 px-4 rounded-2xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 cursor-pointer">Update</button>
+                <button onClick={updateStatusOnly} className="py-3 px-4 rounded-lg bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-all cursor-pointer">Update</button>
             </div>
           </div>
         </div>
