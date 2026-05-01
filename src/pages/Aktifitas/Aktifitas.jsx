@@ -281,7 +281,7 @@ export default function Aktifitas() {
                 <p className="text-sm font-bold text-slate-400">Belum ada aktifitas untuk ditampilkan.</p>
                 <button 
                   onClick={() => navigate("/aktifitas/tambah")} 
-                  className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer uppercase tracking-widest"
+                  className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer"
                 >
                   Buat Sekarang
                 </button>
