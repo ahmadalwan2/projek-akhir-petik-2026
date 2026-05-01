@@ -209,7 +209,7 @@ export default function Keuangan() {
               </div>
               <button 
                 onClick={() => setShowAllTransaksi(!showAllTransaksi)}
-                className="text-[10px] font-black text-white bg-[#0052FF] hover:bg-blue-700 px-5 py-2.5 rounded-xl transition-all shadow-[0_8px_20px_-6px_rgba(0,82,255,0.4)] hover:shadow-[0_12px_25px_-4px_rgba(0,82,255,0.5)] hover:-translate-y-0.5 active:translate-y-0 uppercase tracking-widest cursor-pointer"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer"
               >
                 {showAllTransaksi ? "Tampilkan Sedikit" : "Lihat Semua"}
               </button>
