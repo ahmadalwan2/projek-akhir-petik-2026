@@ -25,7 +25,10 @@ describe('Register Component Error Handling', () => {
     render(<MemoryRouter><Register /></MemoryRouter>);
     
     // Isi data minimal agar bisa submit
+    fireEvent.change(screen.getByPlaceholderText(/Masukkan username/i), { target: { value: 'user1' } });
     fireEvent.change(screen.getByPlaceholderText(/nexora@gmail.com/i), { target: { value: 'test@gmail.com' } });
+    fireEvent.change(screen.getByPlaceholderText(/Buat kata sandi/i), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByPlaceholderText(/Ulangi kata sandi/i), { target: { value: 'password123' } });
     fireEvent.click(screen.getByRole('checkbox'));
     fireEvent.click(screen.getByRole('button', { name: /Daftar$/i }));
 
@@ -41,6 +44,10 @@ describe('Register Component Error Handling', () => {
     });
 
     render(<MemoryRouter><Register /></MemoryRouter>);
+    fireEvent.change(screen.getByPlaceholderText(/Masukkan username/i), { target: { value: 'user2' } });
+    fireEvent.change(screen.getByPlaceholderText(/nexora@gmail.com/i), { target: { value: 'test2@gmail.com' } });
+    fireEvent.change(screen.getByPlaceholderText(/Buat kata sandi/i), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByPlaceholderText(/Ulangi kata sandi/i), { target: { value: 'password123' } });
     fireEvent.click(screen.getByRole('checkbox'));
     fireEvent.click(screen.getByRole('button', { name: /Daftar$/i }));
 
@@ -54,6 +61,7 @@ describe('Register Component Error Handling', () => {
     
     const emailInput = screen.getByPlaceholderText(/nexora@gmail.com/i);
     fireEvent.change(emailInput, { target: { value: 'email-salah' } });
+    fireEvent.click(screen.getByRole('checkbox'));
     fireEvent.click(screen.getByRole('button', { name: /Daftar$/i }));
 
     // Kita mengharapkan pesan validasi muncul (gunakan waitFor karena state update async)
@@ -63,5 +71,23 @@ describe('Register Component Error Handling', () => {
     
     // Pastikan API TIDAK dipanggil jika data tidak valid
     expect(axiosInstance.post).not.toHaveBeenCalled();
+  });
+
+  it('should display a user-friendly message for generic Validation error', async () => {
+    axiosInstance.post.mockRejectedValueOnce({
+      response: { data: { message: 'Validation error' }, status: 500 }
+    });
+
+    render(<MemoryRouter><Register /></MemoryRouter>);
+    fireEvent.change(screen.getByPlaceholderText(/Masukkan username/i), { target: { value: 'kevin' } });
+    fireEvent.change(screen.getByPlaceholderText(/nexora@gmail.com/i), { target: { value: 'kevin@gmail.com' } });
+    fireEvent.change(screen.getByPlaceholderText(/Buat kata sandi/i), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByPlaceholderText(/Ulangi kata sandi/i), { target: { value: 'password123' } });
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.click(screen.getByRole('button', { name: /Daftar$/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Pendaftaran gagal: Data sudah terdaftar, silakan gunakan data lain.')).toBeInTheDocument();
+    });
   });
 });

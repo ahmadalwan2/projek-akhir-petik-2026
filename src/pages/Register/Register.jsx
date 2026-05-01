@@ -77,7 +77,10 @@ export default function Register() {
       if (error?.response?.data?.errors) {
         setErrors(error.response.data.errors)
       } else {
-        const msg = error?.response?.data?.message || "Terjadi kesalahan pada sistem";
+        let msg = error?.response?.data?.message || "Terjadi kesalahan pada sistem";
+        if (msg === "Validation error") {
+          msg = "Pendaftaran gagal: Data sudah terdaftar, silakan gunakan data lain.";
+        }
         setErrors([{ message: msg }])
       }
     } finally {
