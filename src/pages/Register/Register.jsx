@@ -75,10 +75,16 @@ export default function Register() {
       navigate("/login");
     } catch (error) {
       if (error?.response?.data?.errors) {
-        setErrors(error.response.data.errors)
+        const mappedErrors = error.response.data.errors.map(err => {
+          if (err.message && err.message.toLowerCase().includes("validation error")) {
+            return { ...err, message: "Pendaftaran gagal: Data sudah terdaftar, silakan gunakan data lain." };
+          }
+          return err;
+        });
+        setErrors(mappedErrors);
       } else {
         let msg = error?.response?.data?.message || "Terjadi kesalahan pada sistem";
-        if (msg === "Validation error") {
+        if (msg.toLowerCase().includes("validation error")) {
           msg = "Pendaftaran gagal: Data sudah terdaftar, silakan gunakan data lain.";
         }
         setErrors([{ message: msg }])
