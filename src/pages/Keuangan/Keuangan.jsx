@@ -1,20 +1,121 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from '../../component/Sidebar/Sidebar.jsx';
 import MobileHeader from '../../component/MobileHeader/MobileHeader.jsx';
 import Spinner from '../../component/Spinner/Spinner.jsx';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import axiosInstance from "../../utils/axiosInstance.jsx"
+import { getAuthUser } from "../../utils/authHelper";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default function Keuangan() {
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isDataLoading, setIsDataLoading] = useState(true);
-  
-  const [keuangan, setKeuangan] = useState(null)
-  const [chartData, setChartData] = useState([])
-  const [transaksi, setTransaksi] = useState([])
-  const [showAllTransaksi, setShowAllTransaksi] = useState(false)
-  const [filterMode, setFilterMode] = useState("Mingguan")
-  const [showFilter, setShowFilter] = useState(false)
+  const [keuangan, setKeuangan] = useState(null);
+  const [transaksi, setTransaksi] = useState([]);
+  const [showAllTransaksi, setShowAllTransaksi] = useState(false);
+  const [filterMode, setFilterMode] = useState("Mingguan");
+  const [showFilter, setShowFilter] = useState(false);
+
+  const exportToPDF = async () => {
+    const doc = new jsPDF();
+    
+    // Add Logo with aspect ratio preservation
+    try {
+      const response = await fetch('/logo-nexora.png');
+      const blob = await response.blob();
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      await new Promise((resolve) => {
+        reader.onloadend = () => {
+          const base64data = reader.result;
+          const imgProps = doc.getImageProperties(base64data);
+          const logoWidth = 35;
+          const logoHeight = (imgProps.height * logoWidth) / imgProps.width;
+          doc.addImage(base64data, 'PNG', 14, 10, logoWidth, logoHeight);
+          resolve();
+        };
+      });
+    } catch (error) {
+      console.error("Could not load logo for PDF", error);
+    }
+    
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(31, 41, 55); // gray-800
+    doc.text("Laporan Keuangan Nexora", 14, 32);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(107, 114, 128); // gray-500
+    doc.text(`Dicetak pada: ${new Date().toLocaleString('id-ID')}`, 14, 38);
+    
+    // Summary Box
+    doc.setDrawColor(243, 244, 246); // gray-100
+    doc.setFillColor(249, 250, 251); // gray-50
+    doc.roundedRect(14, 45, 182, 30, 3, 3, 'FD');
+    
+    doc.setFontSize(11);
+    doc.setTextColor(55, 65, 81); // gray-700
+    doc.text(`Total Pemasukan`, 20, 53);
+    doc.text(`Total Pengeluaran`, 20, 60);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Saldo Akhir`, 20, 68);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(16, 185, 129); // green-500
+    doc.text(`+ Rp ${Number(keuangan?.pemasukan || 0).toLocaleString('id-ID')}`, 100, 53);
+    doc.setTextColor(239, 68, 68); // red-500
+    doc.text(`- Rp ${Number(keuangan?.pengeluaran || 0).toLocaleString('id-ID')}`, 100, 60);
+    doc.setTextColor(37, 99, 235); // blue-600
+    doc.text(`Rp ${Number(keuangan?.saldo || 0).toLocaleString('id-ID')}`, 100, 68);
+
+    const tableColumn = ["No", "Tanggal", "Kategori", "Tipe", "Catatan", "Jumlah"];
+    const tableRows = [];
+
+    transaksi.forEach((item, index) => {
+      const rowData = [
+        index + 1,
+        new Date(item.createdAt).toLocaleDateString('id-ID'),
+        item.category,
+        item.type.toUpperCase(),
+        item.note || "-",
+        `Rp ${Number(item.amount).toLocaleString('id-ID')}`
+      ];
+      tableRows.push(rowData);
+    });
+
+    autoTable(doc, {
+      startY: 85,
+      head: [tableColumn],
+      body: tableRows,
+      theme: 'striped',
+      headStyles: { 
+        fillColor: [37, 99, 235], // blue-600
+        textColor: [255, 255, 255],
+        fontSize: 10,
+        fontStyle: 'bold',
+        halign: 'left'
+      },
+      columnStyles: {
+        5: { halign: 'right' } // Align 'Jumlah' to right
+      },
+      styles: { 
+        fontSize: 9,
+        cellPadding: 4
+      },
+      alternateRowStyles: {
+        fillColor: [249, 250, 251]
+      }
+    });
+
+    const user = getAuthUser();
+    const userName = user?.name?.split(' ')[0] || "User";
+    const dateStr = new Date().toISOString().split('T')[0];
+    doc.save(`Nexora_Keuangan_${dateStr}_${userName}.pdf`);
+  };
 
   useEffect(() => {
     getKeuangan().finally(() => setIsDataLoading(false))
@@ -39,6 +140,8 @@ export default function Keuangan() {
       console.error(error);
     }
   }
+
+
 
   const getLocalISODate = (date) => {
     const d = new Date(date);
@@ -86,9 +189,27 @@ export default function Keuangan() {
 
         {isDataLoading && <Spinner sidebarOpen={sidebarOpen} />}
         
-        <div className="mb-6">
-          <h2 className="text-2xl font-semibold text-gray-900">Keuangan</h2>
-          <p className="text-sm text-gray-500 mt-1">Pencatatan dan ringkasan arus kas Anda</p>
+        <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-900">Keuangan</h2>
+            <p className="text-sm text-gray-500 mt-1">Pencatatan dan ringkasan arus kas Anda</p>
+          </div>
+          <div className="flex gap-3 w-full sm:w-auto">
+            <button 
+              onClick={exportToPDF}
+              className="bg-white border-2 border-slate-100 hover:border-blue-200 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer flex items-center gap-2 active:scale-95"
+            >
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              Unduh PDF
+            </button>
+            <button 
+              onClick={() => navigate("/keuangan/tambah")}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer flex items-center gap-2 shadow-lg shadow-blue-600/10 active:scale-95"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"></path></svg>
+              Tambah Transaksi
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
@@ -99,7 +220,7 @@ export default function Keuangan() {
               <p className="text-sm font-medium">Saldo Saat Ini</p>
             </div>
             <h2 className="text-3xl font-semibold text-gray-900 tracking-tight mt-1">
-              Rp {keuangan?.saldo?.toLocaleString('id-ID') || 0}
+              Rp {Math.abs(keuangan?.saldo || 0).toLocaleString('id-ID')}
             </h2>
           </div>
 
@@ -231,6 +352,7 @@ export default function Keuangan() {
                     </div>
                     <div>
                       <h4 className="font-semibold text-sm text-gray-800 group-hover:text-blue-600 transition-colors capitalize">{item.category}</h4>
+                      {item.note && <p className="text-[11px] text-gray-400 mt-0.5 line-clamp-1 italic">"{item.note}"</p>}
                       <div className="flex items-center gap-2 mt-1">
                         <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold uppercase ${item.type === 'pemasukan' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{item.type}</span>
                         <p className="text-[12px] text-gray-500">{new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>

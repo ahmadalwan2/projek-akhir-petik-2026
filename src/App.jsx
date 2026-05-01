@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard/Dashboard.jsx";
 import Aktifitas from "./pages/Aktifitas/Aktifitas.jsx";
 import TambahAktifitas from "./pages/Aktifitas/TambahAktifitas.jsx";
 import Keuangan from "./pages/Keuangan/Keuangan.jsx";
+import TambahKeuangan from "./pages/Keuangan/TambahKeuangan.jsx";
 import Pengaturan from "./pages/Pengaturan/Pengaturan.jsx";
 import Notifikasi from "./pages/Notifikasi/Notifikasi.jsx";
 import Syarat_danKetentuan from "./pages/Syarat_danKetentuan/Syarat_danKetentuan.jsx";
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/aktifitas/tambah" element={<ProtectedRoute><TambahAktifitas /></ProtectedRoute>} />
         <Route path="/notifikasi" element={<ProtectedRoute><Notifikasi /></ProtectedRoute>} />
         <Route path="/keuangan" element={<ProtectedRoute><Keuangan /></ProtectedRoute>} />
+        <Route path="/keuangan/tambah" element={<ProtectedRoute><TambahKeuangan /></ProtectedRoute>} />
         <Route path="/pengaturan" element={<ProtectedRoute><Pengaturan /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
