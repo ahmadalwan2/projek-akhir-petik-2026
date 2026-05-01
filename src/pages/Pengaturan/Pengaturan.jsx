@@ -213,7 +213,7 @@ export default function Pengaturan() {
                       </div>
                     )}
                     <div className="absolute inset-0 bg-black/5"></div>
-                    <label className="absolute top-6 right-6 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-2xl text-[10px] font-black tracking-widest uppercase cursor-pointer transition-all active:scale-95 flex items-center gap-2.5">
+                    <label className="absolute top-6 right-6 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-[10px] font-medium tracking-widest uppercase cursor-pointer transition-all active:scale-95 flex items-center gap-2.5">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                       UBAH COVER
                       <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, "cover")} />
@@ -237,7 +237,7 @@ export default function Pengaturan() {
                       <button 
                         onClick={saveProfileData} 
                         disabled={isSaving} 
-                        className={`px-8 py-3.5 rounded-2xl text-white text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 ${isSaving ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"}`}
+                        className={`px-8 py-3 rounded-lg text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 ${isSaving ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"}`}
                       >
                         {isSaving ? "MENYIMPAN..." : "SIMPAN PROFIL"}
                       </button>
@@ -277,7 +277,7 @@ export default function Pengaturan() {
                     <input type="password" placeholder="Konfirmasi Sandi Baru" value={password.confirm} onChange={(e) => setPassword({ ...password, confirm: e.target.value })} className="w-full px-4 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-blue-100" />
                     <button 
                       onClick={handleUpdatePassword} 
-                      className="w-full sm:w-fit px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
+                      className="w-full sm:w-fit px-8 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95"
                     >
                       PERBARUI SANDI
                     </button>
