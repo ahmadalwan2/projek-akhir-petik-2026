@@ -1,4 +1,5 @@
 import axios from "axios";
+import { clearAuthData } from "./authHelper";
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
@@ -17,10 +18,7 @@ axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
         if(error.response && error.response.status === 401){
-            localStorage.removeItem("token");
-            localStorage.removeItem("nexora_user");
-            localStorage.removeItem("nexora_meta");
-            localStorage.removeItem("userName");
+            clearAuthData();
             window.location.href = "/login";
         }
         return Promise.reject(error);

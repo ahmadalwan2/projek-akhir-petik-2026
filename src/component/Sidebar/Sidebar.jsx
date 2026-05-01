@@ -139,8 +139,8 @@ export default function Sidebar({ open, setOpen }) {
 
           <div
             onClick={() => {
+              navigate("/", { replace: true });
               clearAuthData();
-              navigate("/");
             }}
             className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 group
             ${open ? "justify-start" : "justify-center"}

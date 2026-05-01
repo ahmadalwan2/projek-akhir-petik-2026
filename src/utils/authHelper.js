@@ -47,5 +47,4 @@ export const clearAuthData = () => {
     localStorage.removeItem("nexora_meta");
     localStorage.removeItem("userName");
     localStorage.removeItem("nexora_event_logs"); // Opsional, tapi lebih bersih
-    window.dispatchEvent(new Event("userUpdate"));
 };
