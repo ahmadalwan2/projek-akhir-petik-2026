@@ -87,7 +87,7 @@ export default function Keuangan() {
         {isDataLoading && <Spinner sidebarOpen={sidebarOpen} />}
         
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Keuangan</h2>
+          <h2 className="text-2xl font-semibold text-gray-900">Keuangan</h2>
           <p className="text-sm text-gray-500 mt-1">Pencatatan dan ringkasan arus kas Anda</p>
         </div>
 
@@ -98,7 +98,7 @@ export default function Keuangan() {
               <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
               <p className="text-sm font-medium">Saldo Saat Ini</p>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 tracking-tight mt-1">
+            <h2 className="text-3xl font-semibold text-gray-900 tracking-tight mt-1">
               Rp {keuangan?.saldo?.toLocaleString('id-ID') || 0}
             </h2>
           </div>
@@ -109,7 +109,7 @@ export default function Keuangan() {
               <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
               <p className="text-sm font-medium">Pemasukan Bulan Ini</p>
             </div>
-            <h2 className="text-3xl font-bold text-green-600 tracking-tight mt-1">
+            <h2 className="text-3xl font-semibold text-green-600 tracking-tight mt-1">
               + Rp {keuangan?.pemasukan?.toLocaleString('id-ID') || 0}
             </h2>
           </div>
@@ -120,7 +120,7 @@ export default function Keuangan() {
               <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
               <p className="text-sm font-medium">Pengeluaran Bulan Ini</p>
             </div>
-            <h2 className="text-3xl font-bold text-red-600 tracking-tight mt-1">
+            <h2 className="text-3xl font-semibold text-red-600 tracking-tight mt-1">
               - Rp {keuangan?.pengeluaran?.toLocaleString('id-ID') || 0}
             </h2>
           </div>
@@ -204,7 +204,7 @@ export default function Keuangan() {
           <div className="bg-white rounded-2xl border-2 border-slate-100 flex flex-col overflow-hidden w-full">
             <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-white z-10 shrink-0">
               <div>
-                <h3 className="font-bold text-gray-900 text-lg uppercase tracking-tight">Riwayat Transaksi</h3>
+                <h3 className="font-semibold text-gray-900 text-lg uppercase tracking-tight">Riwayat Transaksi</h3>
                 <p className="text-xs text-gray-400 mt-1">Daftar arus kas masuk dan keluar Anda</p>
               </div>
               <button 
@@ -230,7 +230,7 @@ export default function Keuangan() {
                       )}
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-gray-800 group-hover:text-blue-600 transition-colors capitalize">{item.category}</h4>
+                      <h4 className="font-semibold text-sm text-gray-800 group-hover:text-blue-600 transition-colors capitalize">{item.category}</h4>
                       <div className="flex items-center gap-2 mt-1">
                         <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold uppercase ${item.type === 'pemasukan' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{item.type}</span>
                         <p className="text-[12px] text-gray-500">{new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
@@ -238,7 +238,7 @@ export default function Keuangan() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className={`font-bold text-base block ${item.type === 'pemasukan' ? 'text-green-600' : 'text-red-600'}`}>
+                    <span className={`font-semibold text-base block ${item.type === 'pemasukan' ? 'text-green-600' : 'text-red-600'}`}>
                       {item.type === 'pemasukan' ? '+' : '-'} Rp {Number(item.amount).toLocaleString('id-ID')}
                     </span>
                     <p className="text-[10px] text-gray-400 mt-0.5">Berhasil divalidasi</p>

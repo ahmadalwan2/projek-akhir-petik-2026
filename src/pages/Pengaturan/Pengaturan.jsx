@@ -167,7 +167,7 @@ export default function Pengaturan() {
 
           {isDataLoading && <Spinner sidebarOpen={sidebarOpen} />}
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Pengaturan</h2>
+            <h2 className="text-2xl font-semibold text-gray-900">Pengaturan</h2>
             <p className="text-sm text-gray-500 mt-1">Atur preferensi akun dan sistem Anda</p>
           </div>
 
@@ -178,7 +178,7 @@ export default function Pengaturan() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`group whitespace-nowrap lg:text-left px-6 py-3.5 rounded-2xl text-sm transition-all duration-300 font-bold capitalize flex items-center gap-3 active:scale-95 ${
+                    className={`group whitespace-nowrap lg:text-left px-6 py-3.5 rounded-2xl text-sm transition-all duration-300 font-medium capitalize flex items-center gap-3 active:scale-95 ${
                       activeTab === tab 
                         ? "bg-blue-600 text-white shadow-sm" 
                         : "text-gray-500 hover:bg-white hover:text-blue-600"
@@ -245,20 +245,20 @@ export default function Pengaturan() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
                       <div>
-                        <label className="flex items-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5">
+                        <label className="flex items-center gap-2 text-[11px] font-semibold text-gray-400 uppercase tracking-[0.2em] mb-2.5">
                           Nama Lengkap
                           <svg className="w-3 h-3 text-blue-500 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                         </label>
                         <input type="text" name="name" value={profile.name} onChange={handleInputChange} className="w-full px-5 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all shadow-sm" placeholder="Masukkan nama lengkap" />
                       </div>
                       <div>
-                        <label className="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">Email Akses</label>
+                        <label className="block text-[13px] font-semibold text-gray-700 uppercase tracking-wider mb-2">Email Akses</label>
                         <input type="email" name="email" value={profile.email} onChange={handleInputChange} className="w-full px-5 py-3 rounded-xl border border-gray-100 bg-gray-50 text-gray-400 text-sm cursor-not-allowed font-medium" disabled />
                       </div>
                     </div>
 
                     <div className="mt-2">
-                      <label className="flex items-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5">
+                      <label className="flex items-center gap-2 text-[11px] font-semibold text-gray-400 uppercase tracking-[0.2em] mb-2.5">
                         Bio Singkat
                         <svg className="w-3 h-3 text-blue-500 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                       </label>
@@ -270,7 +270,7 @@ export default function Pengaturan() {
 
               {activeTab === "keamanan" && (
                 <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 animate-[fadeIn_0.2s_ease-out]">
-                  <h3 className="font-bold text-lg text-gray-900 mb-6 border-b pb-4">Keamanan & Sandi</h3>
+                  <h3 className="font-semibold text-lg text-gray-900 mb-6 border-b pb-4">Keamanan & Sandi</h3>
                   <div className="flex flex-col gap-5 max-w-md">
                     <input type="password" placeholder="Sandi Lama" value={password.old} onChange={(e) => setPassword({ ...password, old: e.target.value })} className="w-full px-4 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-blue-100" />
                     <input type="password" placeholder="Sandi Baru" value={password.new} onChange={(e) => setPassword({ ...password, new: e.target.value })} className="w-full px-4 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-blue-100" />

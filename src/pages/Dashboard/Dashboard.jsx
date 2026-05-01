@@ -160,8 +160,8 @@ export default function Dashboard() {
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full"></div>
             </div>
             <div>
-              <h1 className="text-2xl font-black text-gray-900 tracking-tight leading-tight">Halo, {profileName}! 👋</h1>
-              <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mt-0.5">{todayDate}</p>
+              <h1 className="text-2xl font-semibold text-gray-900 tracking-tight leading-tight">Halo, {profileName}! 👋</h1>
+              <p className="text-gray-400 text-xs font-medium uppercase tracking-widest mt-0.5">{todayDate}</p>
             </div>
           </div>
           
@@ -189,9 +189,9 @@ export default function Dashboard() {
              
              <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-white/70 text-xs font-black uppercase tracking-[0.2em] mb-1">Status Utama</p>
-                  <p className="text-blue-100/80 text-[10px] font-bold uppercase tracking-widest leading-none">Aktifitas Hari Ini</p>
-                  <h2 className="text-4xl font-black text-white mt-1.5 flex items-baseline gap-1.5">
+                  <p className="text-white/70 text-xs font-semibold uppercase tracking-[0.2em] mb-1">Status Utama</p>
+                  <p className="text-blue-100/80 text-[10px] font-medium uppercase tracking-widest leading-none">Aktifitas Hari Ini</p>
+                  <h2 className="text-4xl font-semibold text-white mt-1.5 flex items-baseline gap-1.5">
                     {totalActivities.split('/')[0]}
                     <span className="text-lg font-bold text-white/40">/ {totalActivities.split('/')[1] || '0'}</span>
                   </h2>
@@ -211,8 +211,8 @@ export default function Dashboard() {
              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50/50 rounded-full blur-2xl -mr-10 -mt-10"></div>
              <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Tugas Selesai</p>
-                  <h2 className="text-3xl font-black text-slate-900 mt-1">{completedTasks}</h2>
+                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest">Tugas Selesai</p>
+                  <h2 className="text-3xl font-semibold text-slate-900 mt-1">{completedTasks}</h2>
                 </div>
                 <div className="relative">
                   <div className="absolute inset-0 bg-emerald-100 blur-lg rounded-full opacity-40"></div>
@@ -227,8 +227,8 @@ export default function Dashboard() {
              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50/50 rounded-full blur-2xl -mr-10 -mt-10"></div>
              <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Produktifitas</p>
-                  <h2 className="text-3xl font-black text-slate-900 mt-1">{productivity}</h2>
+                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest">Produktifitas</p>
+                  <h2 className="text-3xl font-semibold text-slate-900 mt-1">{productivity}</h2>
                 </div>
                 <div className="relative">
                   <div className="absolute inset-0 bg-blue-100 blur-lg rounded-full opacity-40"></div>
@@ -244,19 +244,19 @@ export default function Dashboard() {
           <div className="lg:col-span-2 bg-white p-5 rounded-2xl border-2 border-slate-100">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-sm font-bold text-gray-900">Performance</h3>
+                <h3 className="text-sm font-semibold text-gray-900">Performance</h3>
                 <p className="text-[10px] text-gray-400 mt-0.5">Statistik aktifitasmu</p>
               </div>
               <div className="flex bg-gray-50 p-1.5 rounded-xl border border-gray-100 origin-right">
                 <button
                   onClick={() => setMode("harian")}
-                  className={`py-1.5 px-4 rounded-lg text-xs font-bold transition-all duration-300 ${mode === "harian" ? "bg-white text-blue-600 shadow-sm" : "text-gray-400 hover:text-gray-600"}`}
+                  className={`py-1.5 px-4 rounded-lg text-xs font-medium transition-all duration-300 ${mode === "harian" ? "bg-white text-blue-600 shadow-sm" : "text-gray-400 hover:text-gray-600"}`}
                 >
                   Harian
                 </button>
                 <button
                   onClick={() => setMode("mingguan")}
-                  className={`py-1.5 px-4 rounded-lg text-xs font-bold transition-all duration-300 ${mode === "mingguan" ? "bg-white text-blue-600 shadow-sm" : "text-gray-400 hover:text-gray-600"}`}
+                  className={`py-1.5 px-4 rounded-lg text-xs font-medium transition-all duration-300 ${mode === "mingguan" ? "bg-white text-blue-600 shadow-sm" : "text-gray-400 hover:text-gray-600"}`}
                 >
                   Mingguan
                 </button>
@@ -311,7 +311,7 @@ export default function Dashboard() {
 
           <div className="bg-white p-5 rounded-2xl border-2 border-slate-100 flex flex-col items-center">
             <div className="w-full mb-1">
-              <h3 className="text-base font-black text-gray-900">Productivity</h3>
+              <h3 className="text-base font-semibold text-gray-900">Productivity</h3>
             </div>
             
             <div className="relative w-full h-[150px] flex items-center justify-center">
@@ -335,19 +335,19 @@ export default function Dashboard() {
                 </RadialBarChart>
               </ResponsiveContainer>
               <div className="absolute top-[65%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-                <span className="text-2xl font-black text-gray-900">{productivity}</span>
-                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-0.5">Growth</p>
+                <span className="text-2xl font-semibold text-gray-900">{productivity}</span>
+                <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mt-0.5">Growth</p>
               </div>
             </div>
 
              <div className="mt-2 grid grid-cols-2 gap-2 w-full">
               <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100/50">
-                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Done</p>
-                <p className="text-base font-black text-gray-900">{completedTasks}</p>
+                <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Done</p>
+                <p className="text-base font-semibold text-gray-900">{completedTasks}</p>
               </div>
               <div className="bg-blue-50/30 p-2.5 rounded-xl border border-blue-100/30">
-                <p className="text-[10px] text-blue-400 font-black uppercase tracking-widest">Prod</p>
-                <p className="text-base font-black text-blue-600">{productivity}</p>
+                <p className="text-[10px] text-blue-400 font-semibold uppercase tracking-widest">Prod</p>
+                <p className="text-base font-semibold text-blue-600">{productivity}</p>
               </div>
             </div>
           </div>
@@ -355,7 +355,7 @@ export default function Dashboard() {
 
         <div className="mt-8">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="text-xl font-black text-gray-900 tracking-tight">Aktifitas Terakhir</h3>
+            <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Aktifitas Terakhir</h3>
             <button 
               onClick={() => navigate("/aktifitas")} 
               className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer"
@@ -411,13 +411,13 @@ export default function Dashboard() {
                           )}
                         </div>
                         <div>
-                          <h4 className={`text-base font-black tracking-tight ${progressValue === 100 ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
+                          <h4 className={`text-base font-semibold tracking-tight ${progressValue === 100 ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
                             {activity.title || activity.nama_aktifitas || "Aktifitas"}
                           </h4>
-                          <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest capitalize">{activity.categories || activity.category || "General"}</p>
+                          <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest capitalize">{activity.categories || activity.category || "General"}</p>
                         </div>
                       </div>
-                      <div className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border shadow-sm ${
+                      <div className={`text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-widest border shadow-sm ${
                         progressValue === 100 ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
                         progressValue === 50 ? 'bg-blue-50 text-blue-600 border-blue-100' : 
                         'bg-amber-50 text-amber-600 border-amber-100'
@@ -428,8 +428,8 @@ export default function Dashboard() {
                     
                     <div className="relative space-y-2 pt-2 border-t border-slate-50">
                       <div className="flex justify-between items-center text-[12px]">
-                        <span className="text-gray-400 font-black uppercase tracking-widest">Progress Pelaksanaan</span>
-                        <span className={`font-black ${progressValue === 100 ? 'text-emerald-600' : 'text-blue-600'}`}>{progressValue}%</span>
+                        <span className="text-gray-400 font-semibold uppercase tracking-widest">Progress Pelaksanaan</span>
+                        <span className={`font-semibold ${progressValue === 100 ? 'text-emerald-600' : 'text-blue-600'}`}>{progressValue}%</span>
                       </div>
                       <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                         <div 

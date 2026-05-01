@@ -170,8 +170,8 @@ export default function Aktifitas() {
         
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h2 className="text-2xl font-black text-gray-900 tracking-tight">Daftar Aktifitas</h2>
-            <p className="text-xs text-gray-500 mt-1 font-bold uppercase tracking-widest leading-none">Kelola tugas harianmu dengan Nexora Premium</p>
+            <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">Daftar Aktifitas</h2>
+            <p className="text-xs text-gray-500 mt-1 font-medium uppercase tracking-widest leading-none">Kelola tugas harianmu dengan Nexora Premium</p>
           </div>
           <button 
             onClick={() => navigate("/aktifitas/tambah")}
@@ -192,7 +192,7 @@ export default function Aktifitas() {
                placeholder="Cari aktifitas..."
                value={searchTerm}
                onChange={(e) => setSearchTerm(e.target.value)}
-               className="w-full pl-11 pr-11 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-sm font-bold focus:border-blue-500 focus:shadow-xl focus:shadow-blue-500/5 outline-none transition-all placeholder:text-slate-400"
+               className="w-full pl-11 pr-11 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-sm font-medium focus:border-blue-500 focus:shadow-xl focus:shadow-blue-500/5 outline-none transition-all placeholder:text-slate-400"
              />
              {searchTerm && (
                <button 
@@ -208,7 +208,7 @@ export default function Aktifitas() {
           <div className="md:col-span-3 relative">
              <button 
                onClick={() => { setIsStatusOpen(!isStatusOpen); setIsTimeOpen(false); }}
-               className="w-full px-5 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-sm font-bold text-slate-700 flex justify-between items-center hover:border-blue-200 transition-all cursor-pointer"
+               className="w-full px-5 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-sm font-medium text-slate-700 flex justify-between items-center hover:border-blue-200 transition-all cursor-pointer"
              >
                 <span className="flex items-center gap-2">
                    <div className={`w-2 h-2 rounded-full ${statusFilter === "all" ? "bg-slate-300" : statusFilter === "1" ? "bg-amber-500" : statusFilter === "2" ? "bg-blue-500" : "bg-emerald-500"}`}></div>
@@ -242,7 +242,7 @@ export default function Aktifitas() {
           <div className="md:col-span-3 relative">
              <button 
                onClick={() => { setIsTimeOpen(!isTimeOpen); setIsStatusOpen(false); }}
-               className="w-full px-5 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-sm font-bold text-slate-700 flex justify-between items-center hover:border-blue-200 transition-all cursor-pointer"
+               className="w-full px-5 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-sm font-medium text-slate-700 flex justify-between items-center hover:border-blue-200 transition-all cursor-pointer"
              >
                 <span className="flex items-center gap-2">
                    <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>

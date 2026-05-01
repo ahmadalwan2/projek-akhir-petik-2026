@@ -124,7 +124,7 @@ export default function Sidebar({ open, setOpen }) {
             />
              {open && (
               <div className="overflow-hidden">
-                <p className="font-bold text-sm text-gray-900 truncate uppercase tracking-tight">{user.name}</p>
+                <p className="font-medium text-sm text-gray-900 truncate uppercase tracking-tight">{user.name}</p>
                 <div className="flex items-center gap-1.5 mt-0.5">
                    {user.role === "admin" && (
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
