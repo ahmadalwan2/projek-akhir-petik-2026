@@ -209,7 +209,7 @@ export default function Login() {
                   : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
               }`}
             >
-              Log in
+              Masuk
             </button>
 
           </form>
