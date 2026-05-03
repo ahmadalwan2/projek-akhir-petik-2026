@@ -317,7 +317,7 @@ export default function Dashboard() {
 
           <div className="bg-white p-5 rounded-2xl border-2 border-slate-100 flex flex-col items-center">
             <div className="w-full mb-1">
-              <h3 className="text-base font-semibold text-gray-900">Productivity</h3>
+              <h3 className="text-base font-semibold text-gray-900">Produktifitas</h3>
             </div>
             
             <div className="relative w-full h-[150px] flex items-center justify-center">
@@ -342,17 +342,17 @@ export default function Dashboard() {
               </ResponsiveContainer>
               <div className="absolute top-[65%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
                 <span className="text-2xl font-semibold text-gray-900">{productivity}</span>
-                <p className="text-[10px] text-gray-400 font-semibold tracking-wide mt-0.5">Growth</p>
+                <p className="text-[10px] text-gray-400 font-semibold tracking-wide mt-0.5">Perkembangan</p>
               </div>
             </div>
 
              <div className="mt-2 grid grid-cols-2 gap-2 w-full">
               <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100/50">
-                <p className="text-[10px] text-gray-400 font-semibold tracking-wide">Done</p>
+                <p className="text-[10px] text-gray-400 font-semibold tracking-wide">Selesai</p>
                 <p className="text-base font-semibold text-gray-900">{completedTasks}</p>
               </div>
               <div className="bg-blue-50/30 p-2.5 rounded-xl border border-blue-100/30">
-                <p className="text-[10px] text-blue-400 font-semibold tracking-wide">Prod</p>
+                <p className="text-[10px] text-blue-400 font-semibold tracking-wide">Capaian</p>
                 <p className="text-base font-semibold text-blue-600">{productivity}</p>
               </div>
             </div>
