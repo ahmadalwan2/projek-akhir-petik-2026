@@ -161,7 +161,7 @@ export default function Dashboard() {
             </div>
             <div>
               <h1 className="text-2xl font-semibold text-gray-900 tracking-tight leading-tight">Halo, {profileName}! 👋</h1>
-              <p className="text-gray-400 text-xs font-medium uppercase tracking-widest mt-0.5">{todayDate}</p>
+              <p className="text-gray-400 text-xs font-medium tracking-wide mt-0.5">{todayDate}</p>
             </div>
           </div>
           
@@ -189,8 +189,8 @@ export default function Dashboard() {
              
              <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-white/70 text-xs font-semibold uppercase tracking-[0.2em] mb-1">Status Utama</p>
-                  <p className="text-blue-100/80 text-[10px] font-medium uppercase tracking-widest leading-none">Aktifitas Hari Ini</p>
+                  <p className="text-white/70 text-xs font-semibold tracking-wide mb-1">Status Utama</p>
+                  <p className="text-blue-100/80 text-[10px] font-medium tracking-wide leading-none">Aktifitas Hari Ini</p>
                   <h2 className="text-4xl font-semibold text-white mt-1.5 flex items-baseline gap-1.5">
                     {totalActivities.split('/')[0]}
                     <span className="text-lg font-bold text-white/40">/ {totalActivities.split('/')[1] || '0'}</span>
@@ -211,7 +211,7 @@ export default function Dashboard() {
              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50/50 rounded-full blur-2xl -mr-10 -mt-10"></div>
              <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest">Tugas Selesai</p>
+                  <p className="text-slate-400 text-xs font-semibold tracking-wide">Tugas Selesai</p>
                   <h2 className="text-3xl font-semibold text-slate-900 mt-1">{completedTasks}</h2>
                 </div>
                 <div className="relative">
@@ -227,7 +227,7 @@ export default function Dashboard() {
              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50/50 rounded-full blur-2xl -mr-10 -mt-10"></div>
              <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest">Produktifitas</p>
+                  <p className="text-slate-400 text-xs font-semibold tracking-wide">Produktifitas</p>
                   <h2 className="text-3xl font-semibold text-slate-900 mt-1">{productivity}</h2>
                 </div>
                 <div className="relative">
@@ -303,7 +303,7 @@ export default function Dashboard() {
                 </ResponsiveContainer>
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Menyiapkan Grafik...</p>
+                  <p className="text-[10px] font-black text-slate-300 tracking-wide">Menyiapkan Grafik...</p>
                 </div>
               )}
             </div>
@@ -336,17 +336,17 @@ export default function Dashboard() {
               </ResponsiveContainer>
               <div className="absolute top-[65%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
                 <span className="text-2xl font-semibold text-gray-900">{productivity}</span>
-                <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mt-0.5">Growth</p>
+                <p className="text-[10px] text-gray-400 font-semibold tracking-wide mt-0.5">Growth</p>
               </div>
             </div>
 
              <div className="mt-2 grid grid-cols-2 gap-2 w-full">
               <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100/50">
-                <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Done</p>
+                <p className="text-[10px] text-gray-400 font-semibold tracking-wide">Done</p>
                 <p className="text-base font-semibold text-gray-900">{completedTasks}</p>
               </div>
               <div className="bg-blue-50/30 p-2.5 rounded-xl border border-blue-100/30">
-                <p className="text-[10px] text-blue-400 font-semibold uppercase tracking-widest">Prod</p>
+                <p className="text-[10px] text-blue-400 font-semibold tracking-wide">Prod</p>
                 <p className="text-base font-semibold text-blue-600">{productivity}</p>
               </div>
             </div>
@@ -414,10 +414,10 @@ export default function Dashboard() {
                           <h4 className={`text-base font-semibold tracking-tight ${progressValue === 100 ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
                             {activity.title || activity.nama_aktifitas || "Aktifitas"}
                           </h4>
-                          <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest capitalize">{activity.categories || activity.category || "General"}</p>
+                          <p className="text-[11px] font-medium text-gray-400 tracking-wide capitalize">{activity.categories || activity.category || "General"}</p>
                         </div>
                       </div>
-                      <div className={`text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-widest border shadow-sm ${
+                      <div className={`text-[10px] font-semibold px-3 py-1 rounded-full tracking-wide capitalize border shadow-sm ${
                         progressValue === 100 ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
                         progressValue === 50 ? 'bg-blue-50 text-blue-600 border-blue-100' : 
                         'bg-amber-50 text-amber-600 border-amber-100'
@@ -428,7 +428,7 @@ export default function Dashboard() {
                     
                     <div className="relative space-y-2 pt-2 border-t border-slate-50">
                       <div className="flex justify-between items-center text-[12px]">
-                        <span className="text-gray-400 font-semibold uppercase tracking-widest">Progress Pelaksanaan</span>
+                        <span className="text-gray-400 font-semibold tracking-wide">Progress Pelaksanaan</span>
                         <span className={`font-semibold ${progressValue === 100 ? 'text-emerald-600' : 'text-blue-600'}`}>{progressValue}%</span>
                       </div>
                       <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
