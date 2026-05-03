@@ -266,13 +266,14 @@ export default function Dashboard() {
             <div className="w-full h-[200px]">
               {chartData && chartData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-                  <AreaChart data={chartData} margin={{ top: 10, right: 0, left: -30, bottom: 0 }}>
+                  <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorValueDashUnique" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
                         <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
+                    <CartesianGrid vertical={false} stroke="#f1f5f9" strokeWidth={1} />
                     <XAxis 
                       dataKey="name" 
                       axisLine={false} 
@@ -284,11 +285,16 @@ export default function Dashboard() {
                       axisLine={false} 
                       tickLine={false} 
                       tick={{ fontSize: 11, fill: '#64748b', fontWeight: 700 }}
+                      tickFormatter={(value) => `${Math.round(value)}%`}
+                      domain={[0, 100]}
+                      ticks={[0, 20, 40, 60, 80, 100]}
+                      width={45}
                     />
                     <Tooltip 
-                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', padding: '8px' }}
-                      labelStyle={{ fontSize: '10px', fontWeight: 'bold' }}
-                      itemStyle={{ fontSize: '10px', padding: '2px 0', color: '#3b82f6' }}
+                      contentStyle={{ backgroundColor: '#071B4A', borderRadius: '10px', border: 'none', boxShadow: '0 10px 25px -5px rgba(7, 27, 74, 0.4)', padding: '10px 14px' }}
+                      labelStyle={{ fontSize: '11px', fontWeight: 'bold', color: '#94a3b8', marginBottom: '2px' }}
+                      itemStyle={{ fontSize: '12px', padding: '0', color: '#ffffff', fontWeight: '600' }}
+                      formatter={(value) => [`${Math.round(value)}%`, 'Progres']}
                     />
                     <Area 
                       type="monotone" 
