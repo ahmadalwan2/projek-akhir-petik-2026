@@ -244,8 +244,8 @@ export default function Dashboard() {
           <div className="lg:col-span-2 bg-white p-5 rounded-2xl border-2 border-slate-100">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">Performance</h3>
-                <p className="text-[10px] text-gray-400 mt-0.5">Statistik aktifitasmu</p>
+                <h3 className="text-sm font-semibold text-gray-900">Ringkasan Progres</h3>
+                <p className="text-[10px] text-gray-400 mt-0.5">Perkembangan Produktifitasmu</p>
               </div>
               <div className="flex bg-gray-50 p-1.5 rounded-xl border border-gray-100 origin-right">
                 <button
