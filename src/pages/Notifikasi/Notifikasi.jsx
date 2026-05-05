@@ -182,36 +182,34 @@ export default function Notifikasi() {
             <p className="text-sm text-gray-500 mt-1 font-medium">Pantau setiap pembaruan dan pengingat aktifitasmu di sini.</p>
           </div>
           <div className="flex items-center gap-3">
-             <button 
+              <button 
                 onClick={markAllRead}
                 disabled={notifications.length === 0}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all border shadow-sm ${
+                className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors border ${
                   notifications.length === 0 
-                  ? "bg-gray-50 text-gray-400 border-gray-100 cursor-not-allowed" 
-                  : "bg-white text-gray-700 border-gray-200 hover:border-blue-500 hover:text-blue-600 cursor-pointer"
+                  ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed" 
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 cursor-pointer"
                 }`}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Tandai Dibaca
               </button>
               
               <button 
                 onClick={clearAllNotifications}
                 disabled={notifications.length === 0}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shadow-sm ${
+                className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   notifications.length === 0 
                   ? "bg-gray-50 text-gray-400 cursor-not-allowed" 
-                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200 cursor-pointer"
+                  : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
                 }`}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Bersihkan Semua
               </button>
           </div>
         </div>
 
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden max-w-4xl">
+        <div className="bg-white rounded-xl border-2 border-slate-100 overflow-hidden max-w-4xl">
           <div className="divide-y divide-gray-100">
             {notifications.length === 0 ? (
               <div className="p-8 text-center text-gray-500 text-sm">Belum ada notifikasi.</div>
