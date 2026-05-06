@@ -98,13 +98,6 @@ export default function TambahKeuangan() {
               <h2 className="text-2xl font-semibold text-gray-900">Tambah Transaksi</h2>
               <p className="text-sm text-gray-500 mt-1">Catat pemasukan atau pengeluaran baru Anda.</p>
             </div>
-            <button 
-              onClick={() => navigate("/keuangan")}
-              className="text-gray-500 hover:text-gray-700 font-medium text-sm flex items-center gap-2 transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
-              Kembali
-            </button>
           </div>
 
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 max-w-2xl">
